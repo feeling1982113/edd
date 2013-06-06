@@ -100,8 +100,6 @@ class EController(EObject):
         if isinstance(data, basestring):
             splitResult = data.split('.')
 
-            print splitResult
-
             if len(splitResult) == 2:
                 if splitResult[0] in self.ls():
                     node = self.getNode(splitResult[0])
@@ -128,7 +126,7 @@ class EController(EObject):
 
         self.Message.emit(self.kMessageConnectionMade.setData(data))
 
-        return data
+        return True
 
     def disconnectAttr(self, attrOne, attrTwo):
 
@@ -141,8 +139,9 @@ class EController(EObject):
         if connOne.matches(connTwo):
             connId = self.__graphHandle.delConnection(connOne.Id)
             self.Message.emit(self.kMessageConnectionBroke.setData(connId))
+            return True
 
-        return
+        return False
 
     def ls(self):
         return [node.Name for node in self.__scene.getNodes().itervalues()]
