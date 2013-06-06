@@ -124,9 +124,11 @@ class EController(EObject):
 
         data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
 
-        self.Message.emit(self.kMessageConnectionMade.setData(data))
+        if len(data):
+            self.Message.emit(self.kMessageConnectionMade.setData(data))
+            return True
 
-        return True
+        return False
 
     def disconnectAttr(self, attrOne, attrTwo):
 
