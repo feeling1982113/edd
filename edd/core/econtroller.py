@@ -100,8 +100,14 @@ class EController(EObject):
         if isinstance(data, basestring):
             splitResult = data.split('.')
 
-            if len(splitResult) > 1:
-                return self.getNode(splitResult[0]).getAttributeByName(splitResult[1])
+            print splitResult
+
+            if len(splitResult) == 2:
+                if splitResult[0] in self.ls():
+                    node = self.getNode(splitResult[0])
+
+                    if splitResult[1] in [attr.Name for attr in node.lsAttributes()]:
+                        return node.getAttributeByName(splitResult[1])
 
             return None
 
