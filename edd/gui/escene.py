@@ -223,7 +223,8 @@ class EScene(QGraphicsScene):
             for item in data:
                 if isinstance(item, EEdge):
                     if self.__kCutLine.collidesWithPath(item.shape()):
-                        self.__controller.disconnectAttr(item.Head[ENode.kGuiAttributeId], item.Tail[ENode.kGuiAttributeId])
+                        #self.__controller.disconnectAttr(item.Head[ENode.kGuiAttributeId], item.Tail[ENode.kGuiAttributeId])
+                        self.__controller.disconnectAttr(None, None, item.Id)
 
                 elif isinstance(item, ENode):
                     self.__controller.deleteNode(item.Id)

@@ -128,11 +128,13 @@ class EController(EObject):
 
         return data
 
-    def disconnectAttr(self, attrOne, attrTwo):
+    def disconnectAttr(self, attrOne, attrTwo, connId=None):
 
-        attrOne, attrTwo = self.__get(attrOne, attrTwo)
+        if attrOne and attrTwo:
+            attrOne, attrTwo = self.__get(attrOne, attrTwo)
 
-        print attrOne, attrTwo
+        if connId:
+            self.Message.emit(self.kMessageConnectionBroke.setData(self.__graphHandle.delConnection(connId)))
 
         return
 

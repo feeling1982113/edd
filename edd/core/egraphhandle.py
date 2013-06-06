@@ -121,7 +121,7 @@ class EGraphHandle(EObject):
 
         return None
 
-    def getConnectionFromAttributeId(self, attrId):
+    def getConnectionIdFromAttributeId(self, attrId):
 
         for key, value in self.__connections.iteritems():
             if attrId in [value.Head.Id, value.Tail.Id]:
@@ -200,7 +200,7 @@ class EGraphHandle(EObject):
 
         if self.__attributes.has_key(attrId):
 
-            conn = self.getConnectionFromAttributeId(attrId)
+            conn = self.getConnectionIdFromAttributeId(attrId)
 
             attribute.Handle.delConnection(conn)
             self.__connections.pop(conn, None)
