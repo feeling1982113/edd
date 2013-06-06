@@ -162,8 +162,7 @@ class EScene(QGraphicsScene):
         self.addItem(self.__dummyTail)
 
         self.__nodes = {}
-        self.__defaultNodeNames = {}
-        self.__userNodeNames = {}
+        self.__nodeNames = {}
         self.__connections = {}
 
         self.__pressedAttributes = None
@@ -267,9 +266,8 @@ class EScene(QGraphicsScene):
 
             node = self.__nodes[message.getData()]
 
-            #print re.search("^[^_]*", node.Name).group(0)
-            #print re.sub("[^a-zA-Z\d]", "", re.search("^[^_]*", node.Name).group(0))
-            #print re.sub("[^a-zA-Z\d]", "", re.match('.*?([0-9]+)$', node.Name).group(1))
+            if self.__nodeNames.has_key(node.Name):
+                self.__nodeNames.pop(node.Name, None)
 
             self.removeItem(node)
             self.__nodes.pop(message.getData(), None)
@@ -330,22 +328,16 @@ class EScene(QGraphicsScene):
             graphicsItem.setZValue(1.0)
             graphicsItem.onPress.connect(self.__onDummyMouseClick)
 
+            baseName = graphicsItem.Name
+
             if graphicsItemName is None:
-                graphicsItemName = graphicsItem.Name
-
-                if self.__defaultNodeNames.has_key(graphicsItemName):
-                    self.__defaultNodeNames[graphicsItemName] += 1
-                else:
-                    self.__defaultNodeNames[graphicsItemName] = 1
-
-                graphicsItem.Name = "%s_%s" % (graphicsItemName, self.__defaultNodeNames[graphicsItemName])
+                graphicsItem.Name = "%s_%s" % (graphicsItem.Name,
+                                               len([typeName for typeName in self.__nodeNames.values() if typeName == baseName]) + 1)
+                self.__nodeNames[graphicsItem.Name] = baseName
 
             else:
-                if self.__userNodeNames.has_key(graphicsItemName):
-                    print graphicsItemName.split('_')
-
                 graphicsItem.Name = graphicsItemName
-                self.__userNodeNames[graphicsItemName] = 1
+                self.__nodeNames[graphicsItemName] = baseName
 
             self.__nodes[graphicsItem.Id] = graphicsItem
 

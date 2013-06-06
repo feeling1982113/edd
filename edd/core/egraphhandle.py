@@ -106,11 +106,11 @@ class EGraphHandle(EObject):
         return None
 
     def delHandle(self, nodeId):
+
+        for conn in self.__nodes[nodeId].getConnections():
+            self.delConnection(conn)
+
         for attr in self.__nodes[nodeId].lsAttributes():
-
-            if attr.isConnected:
-                self.disconnectAttribute(attr)
-
             self.__attributes.pop(attr.Id, None)
 
         self.__nodes.pop(nodeId, None)
