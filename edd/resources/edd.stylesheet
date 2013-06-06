@@ -342,10 +342,9 @@ QMenuBar::item
 }
 
 QMenuBar::item:selected 
-{ 
-    /* when selected using mouse or keyboard 
-    border-color: darkblue;
-    background: rgba(100, 100, 100, 150); */
+{
+    color: black;
+    border-radius: 1px;
 }
 
 QProgressBar

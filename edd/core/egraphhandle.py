@@ -38,8 +38,6 @@ class EConnection(EObject):
 
 class EGraphHandle(EObject):
 
-    kMessageConnectionBroke = EObject()
-
     def __init__(self):
         EObject.__init__(self)
 
@@ -55,16 +53,9 @@ class EGraphHandle(EObject):
         if message.matches(ENodeHandle.kMessageAttributeRemoved):
             self.__attributes.pop(message.getData().Id, None)
 
-    def reset(self):
-        keys = self.__nodes.keys()
-        for k in keys:
-            self.delHandle(k)
-
-        self.__nodes = {}
-        self.__attributes = {}
-        self.__connections = {}
-
-        return True
+    @property
+    def Data(self):
+        return self.__nodes, self.__attributes, self.__connections
 
     def getAttributeFromId(self, attrId):
         if not isinstance(attrId, uuid.UUID):
@@ -102,11 +93,11 @@ class EGraphHandle(EObject):
         return None
 
     def delHandle(self, nodeId):
+
+        for conn in self.__nodes[nodeId].getConnections():
+            self.delConnection(conn)
+
         for attr in self.__nodes[nodeId].lsAttributes():
-
-            if attr.isConnected:
-                self.disconnectAttribute(attr)
-
             self.__attributes.pop(attr.Id, None)
 
         self.__nodes.pop(nodeId, None)
@@ -122,7 +113,7 @@ class EGraphHandle(EObject):
             else:
                 self.disconnectAttribute(attrTwo)
 
-        return
+        return connectionId
 
     def getConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
@@ -130,7 +121,7 @@ class EGraphHandle(EObject):
 
         return None
 
-    def getConnectionFromAttributeId(self, attrId):
+    def getConnectionIdFromAttributeId(self, attrId):
 
         for key, value in self.__connections.iteritems():
             if attrId in [value.Head.Id, value.Tail.Id]:
@@ -149,12 +140,15 @@ class EGraphHandle(EObject):
 
         if self.__attributes.has_key(attributeId):
 
-            self.__attributes[attributeId].Data = value
+            attr = self.__nodes[self.__attributes[attributeId]].getAttributeById(attributeId)
+            attr.Data = value
 
-            if self.__attributes[attributeId].Handle.hasConnections():
+            if attr.Handle.hasConnections():
 
                 for conn in self.__connections.itervalues():
                     conn.update()
+
+            return attr
 
     def connectAttributes(self, attributeOne, attributeTwo, silent=False):
 
@@ -170,12 +164,10 @@ class EGraphHandle(EObject):
             attrTwo = self.__nodes[self.__attributes[attributeTwo]].getAttributeById(attributeTwo)
 
             if attrOne.Type.matches(attrTwo.Type):
-                self.Message.emit(self.kMessageInternalError.setData(None))
-                return False
+                return []
 
             if attrOne.Handle.matches(attrTwo.Handle):
-                self.Message.emit(self.kMessageInternalError.setData(None))
-                return False
+                return []
 
             if attrOne.Type.matches(EAttribute.kTypeInput):
                 inputAttr = attrOne
@@ -208,18 +200,16 @@ class EGraphHandle(EObject):
 
         if self.__attributes.has_key(attrId):
 
-            conn = self.getConnectionFromAttributeId(attrId)
+            conn = self.getConnectionIdFromAttributeId(attrId)
 
             attribute.Handle.delConnection(conn)
             self.__connections.pop(conn, None)
 
             attribute.isConnected = False
 
-            self.Message.emit(self.kMessageConnectionBroke.setData(conn))
+            return conn
 
-            return True
-
-        return False
+        return None
 
 
 

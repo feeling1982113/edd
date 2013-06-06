@@ -8,6 +8,7 @@ class EPropertyEditor(QTabWidget):
     def __init__(self, controller):
         QTabWidget.__init__(self)
 
+        self.__controller = controller
         self.__scene = controller.getScene()
 
         self.__scene.onSelectionChanged.connect(self.rebuild)
@@ -38,7 +39,6 @@ class EPropertyEditor(QTabWidget):
         propLayout.setContentsMargins(0, 0, 0, 0)
 
         lineEdit = QLineEdit('%s' % prop.Data)
-        # TODO: Add internal data (Need interface :))
         lineEdit.kInternalId = prop.Id
         lineEdit.editingFinished.connect(self.__processLineEdit)
 

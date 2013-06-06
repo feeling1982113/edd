@@ -47,7 +47,7 @@ class EConsole(QPlainTextEdit):
         self.moveCursor(QTextCursor.End)
 
     def getHelp(self):
-        print 'You need help? :)'
+        print self.namespace.keys()
 
     def getCommand(self):
         doc = self.document()

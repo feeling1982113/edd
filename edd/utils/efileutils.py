@@ -1,8 +1,6 @@
 import os
 import tarfile
 import shutil
-import uuid
-import time
 import re
 from itertools import imap
 

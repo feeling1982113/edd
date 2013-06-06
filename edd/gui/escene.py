@@ -4,7 +4,6 @@ from PyQt4.QtGui import *
 
 from edd.core.eobject import EObject
 from edd.core.eattribute import EAttribute
-from edd.core.egraphhandle import EGraphHandle
 
 from edd.core.econtroller import EController
 
@@ -161,8 +160,7 @@ class EScene(QGraphicsScene):
         self.addItem(self.__dummyTail)
 
         self.__nodes = {}
-        self.__defaultNodeNames = {}
-        self.__userNodeNames = {}
+        self.__nodeNames = {}
         self.__connections = {}
 
         self.__pressedAttributes = None
@@ -224,7 +222,7 @@ class EScene(QGraphicsScene):
             for item in data:
                 if isinstance(item, EEdge):
                     if self.__kCutLine.collidesWithPath(item.shape()):
-                        self.__controller.Handle.delConnection(item.Id)
+                        self.__controller.disconnectAttr(item.Head[ENode.kGuiAttributeId], item.Tail[ENode.kGuiAttributeId])
 
                 elif isinstance(item, ENode):
                     self.__controller.deleteNode(item.Id)
@@ -260,8 +258,18 @@ class EScene(QGraphicsScene):
             self.__kSelected.Item = newNode
 
         if message.matches(EController.kMessageNodeRemoved):
-            self.removeItem(self.__nodes[message.getData()])
+
+            self.__kSelected.Item = None
+            self.onSelectionChanged.emit(type("EData", (EObject,), {'nodeName': '', 'nodeProperties': []}))
+
+            node = self.__nodes[message.getData()]
+
+            if self.__nodeNames.has_key(node.Name):
+                self.__nodeNames.pop(node.Name, None)
+
+            self.removeItem(node)
             self.__nodes.pop(message.getData(), None)
+
             return
 
         if message.matches(EController.kMessageConnectionMade):
@@ -289,11 +297,11 @@ class EScene(QGraphicsScene):
 
             return
 
-        if message.matches(EGraphHandle.kMessageConnectionBroke):
+        if message.matches(EController.kMessageConnectionBroke):
             if message.getData() in self.__connections.keys():
 
-                connHead = self.__connections[message.getData()].Head#[ENode.kGuiAttributeId]
-                connTail = self.__connections[message.getData()].Tail#[ENode.kGuiAttributeId]
+                connHead = self.__connections[message.getData()].Head
+                connTail = self.__connections[message.getData()].Tail
 
                 self.removeItem(self.__connections[message.getData()])
 
@@ -318,22 +326,16 @@ class EScene(QGraphicsScene):
             graphicsItem.setZValue(1.0)
             graphicsItem.onPress.connect(self.__onDummyMouseClick)
 
+            baseName = graphicsItem.Name
+
             if graphicsItemName is None:
-                graphicsItemName = graphicsItem.Name
-
-                if self.__defaultNodeNames.has_key(graphicsItemName):
-                    self.__defaultNodeNames[graphicsItemName] += 1
-                else:
-                    self.__defaultNodeNames[graphicsItemName] = 1
-
-                graphicsItem.Name = "%s_%s" % (graphicsItemName, self.__defaultNodeNames[graphicsItemName])
+                graphicsItem.Name = "%s_%s" % (graphicsItem.Name,
+                                               len([typeName for typeName in self.__nodeNames.values() if typeName == baseName]) + 1)
+                self.__nodeNames[graphicsItem.Name] = baseName
 
             else:
-                if self.__userNodeNames.has_key(graphicsItemName):
-                    print graphicsItemName.split('_')
-
                 graphicsItem.Name = graphicsItemName
-                self.__userNodeNames[graphicsItemName] = 1
+                self.__nodeNames[graphicsItemName] = baseName
 
             self.__nodes[graphicsItem.Id] = graphicsItem
 
@@ -425,9 +427,9 @@ class EScene(QGraphicsScene):
             self.__kSelected.Item.mute(None)
 
             if isinstance(self.itemAt(mouseEvent.scenePos()), ENode):
-                hitId, hitPoint = self.itemAt(mouseEvent.scenePos()).mapFromPoint(mouseEvent.scenePos())
-
-                self.__controller.connectAttr(self.__pressedAttributes, hitId)
+                if self.__pressedAttributes:
+                    hitId, hitPoint = self.itemAt(mouseEvent.scenePos()).mapFromPoint(mouseEvent.scenePos())
+                    self.__controller.connectAttr(self.__pressedAttributes, hitId)
 
         self.update()
 

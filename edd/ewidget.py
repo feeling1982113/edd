@@ -1,8 +1,9 @@
+import inspect
 import sys
-import functools
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
 
 from edd.core.econtroller import EController
 from edd.gui.eview import EView
@@ -21,13 +22,14 @@ class EWidget(QSplitter):
         self.__view = EView(EController())
 
         self.__console = EConsole()
-        EHighlighter(self.__console.document(), ['cwd'], ['createNode',
-                                                          'getNode',
-                                                          'deleteNode',
-                                                          'connectAttr',
-                                                          'getTransform',
-                                                          'setPos',
-                                                          'NodeTypes'])
+
+        controllerCmd = []
+
+        for item in inspect.getmembers(self.__view.Controller):
+            if not inspect.isbuiltin(item[1]) and not item[0].startswith('_'):
+                controllerCmd.append(str(item[0]))
+
+        EHighlighter(self.__console.document(), ['cwd'], controllerCmd)
 
         self.__console.updateNamespace({'cwd': self.__view.Controller,
                                         'history': self.__console.getHistory})
@@ -47,19 +49,21 @@ class EWidget(QSplitter):
         print '...Data from menu: < %s >' % data
 
     def contextMenuEvent(self, mouseEvent):
-        menu = QMenu()
+        pass
 
-        action_1 = QAction("Create Node A", menu, triggered=functools.partial(self.processMenuItem, 'MyNodeOne'))
-        action_2 = QAction("Create Node B", menu, triggered=functools.partial(self.processMenuItem, 'MyNodeTwo'))
+        #menu = QMenu()
 
-        menu.addAction(action_1)
-        menu.addAction(action_2)
+        #action_1 = QAction("Create Node A", menu, triggered=functools.partial(self.processMenuItem, 'MyNodeOne'))
+        #action_2 = QAction("Create Node B", menu, triggered=functools.partial(self.processMenuItem, 'MyNodeTwo'))
 
-        menu.exec_(QCursor.pos())
+        #menu.addAction(action_1)
+        #menu.addAction(action_2)
+        #menu.exec_(QCursor.pos())
 
 
 if __name__ == '__main__':
     import os
+    import edd.resources.resource_rc
 
     app = QApplication(sys.argv)
 

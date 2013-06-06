@@ -31,6 +31,10 @@ class EController(EObject):
         self.__graphHandle = EGraphHandle()
 
     @property
+    def Model(self):
+        return self.__graphHandle.Data
+
+    @property
     def Handle(self):
         return self.__graphHandle
 
@@ -83,54 +87,95 @@ class EController(EObject):
 
     def deleteNode(self, node):
 
-        if isinstance(node, basestring):
-            node = self.getNode(node)
-            theId = self.__graphHandle.delHandle(node.Id)
+        node = self.getNode(node)
 
-        elif isinstance(node, uuid.UUID):
-            theId = self.__graphHandle.delHandle(node)
+        for conn in node.getConnections():
+            self.Message.emit(self.kMessageConnectionBroke.setData(conn))
+
+        theId = self.__graphHandle.delHandle(node.Id)
 
         self.Message.emit(self.kMessageNodeRemoved.setData(theId))
+
+    def toInternal(self, data):
+
+        if isinstance(data, EAttribute):
+            return data
+
+        if isinstance(data, basestring):
+            splitResult = data.split('.')
+
+            if len(splitResult) == 2:
+                if splitResult[0] in self.ls():
+                    node = self.getNode(splitResult[0])
+
+                    if splitResult[1] in [attr.Name for attr in node.lsAttributes()]:
+                        return node.getAttributeByName(splitResult[1])
+
+            return None
+
+        if isinstance(data, uuid.UUID):
+            data = self.__graphHandle.getAttributeFromId(data)
+            return data
+
+        return None
 
     def connectAttr(self, attrOne, attrTwo):
 
         data = []
 
-        if isinstance(attrOne, EAttribute) and isinstance(attrTwo, EAttribute):
-            data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
+        attrOne = self.toInternal(attrOne)
+        attrTwo = self.toInternal(attrTwo)
 
-        elif isinstance(attrOne, basestring) and isinstance(attrTwo, basestring):
+        data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
 
-            nodeOneName, attrOneName = attrOne.split('.')
-            nodeTwoName, attrTwoName = attrTwo.split('.')
+        if len(data):
+            self.Message.emit(self.kMessageConnectionMade.setData(data))
+            return True
 
-            attrOne = self.getNode(nodeOneName).getAttributeByName(attrOneName)
-            attrTwo = self.getNode(nodeTwoName).getAttributeByName(attrTwoName)
+        return False
 
-            if attrOne and attrTwo:
-                data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
+    def disconnectAttr(self, attrOne, attrTwo):
 
-        elif isinstance(attrOne, uuid.UUID) and isinstance(attrTwo, uuid.UUID):
-            attrOne = self.__graphHandle.getAttributeFromId(attrOne)
-            attrTwo = self.__graphHandle.getAttributeFromId(attrTwo)
+        attrOne = self.toInternal(attrOne)
+        attrTwo = self.toInternal(attrTwo)
 
-            data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
+        connOne = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(attrOne.Id))
+        connTwo = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(attrTwo.Id))
 
-        self.Message.emit(self.kMessageConnectionMade.setData(data))
+        if connOne.matches(connTwo):
+            connId = self.__graphHandle.delConnection(connOne.Id)
+            self.Message.emit(self.kMessageConnectionBroke.setData(connId))
+            return True
 
-        return data
+        return False
 
     def ls(self):
         return [node.Name for node in self.__scene.getNodes().itervalues()]
 
     def reset(self):
-        self.__graphHandle.reset()
+
+        for node in self.ls():
+            self.deleteNode(node)
+
+        print self.__graphHandle.Data
 
     def __getNodeCreateCmd(self, nodeTransform):
 
+        props = {}
+
+        for prop in nodeTransform.Handle.lsProperties():
+            if prop.Type.matches(EAttribute.kTypeFloat):
+                props[prop.Name] = float(prop.Data)
+
+            if prop.Type.matches(EAttribute.kTypeList):
+                props[prop.Name] = [float(item.Data) for item in prop.Data]
+
+            if prop.Type.matches(EAttribute.kTypeString):
+                props[prop.Name] = str(prop.Data)
+
         return dict({'TYPE': nodeTransform.Handle.NodeType,
                      'PX': nodeTransform.scenePos().x(),
-                     'PY': nodeTransform.scenePos().y()})
+                     'PY': nodeTransform.scenePos().y(), 'PROPS': props})
 
     def __getNodePropertySetCmd(self, nodeTransform):
         return
@@ -159,7 +204,11 @@ class EController(EObject):
         loadData = json.loads(open(sceneFile).read())
 
         for nodeName, nodeData in loadData['NODES'].iteritems():
-            self.getTransform(self.createNode(nodeData['TYPE'], nodeName)).setPos(nodeData['PX'], nodeData['PY'])
+            node = self.createNode(nodeData['TYPE'], nodeName)
+            self.getTransform(node).setPos(nodeData['PX'], nodeData['PY'])
+
+            for propName, propData in nodeData['PROPS'].iteritems():
+                node.getAttributeByName(propName).Data = propData
 
         for connData in loadData['CONNECTIONS']:
             self.connectAttr(connData['HEAD'], connData['TAIL'])
