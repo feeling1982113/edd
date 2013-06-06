@@ -92,35 +92,31 @@ class EController(EObject):
 
         self.Message.emit(self.kMessageNodeRemoved.setData(theId))
 
-    def __get(self, attrOne, attrTwo):
+    def toInternal(self, data):
 
-        if isinstance(attrOne, EAttribute) and isinstance(attrTwo, EAttribute):
-            return attrOne, attrTwo
+        if isinstance(data, EAttribute):
+            return data
 
-        if isinstance(attrOne, basestring) and isinstance(attrTwo, basestring):
+        if isinstance(data, basestring):
+            splitResult = data.split('.')
 
-            nodeOneName, attrOneName = attrOne.split('.')
-            nodeTwoName, attrTwoName = attrTwo.split('.')
-
-            attrOne = self.getNode(nodeOneName).getAttributeByName(attrOneName)
-            attrTwo = self.getNode(nodeTwoName).getAttributeByName(attrTwoName)
-
-            if attrOne and attrTwo:
-                return attrOne, attrTwo
+            if len(splitResult) > 1:
+                return self.getNode(splitResult[0]).getAttributeByName(splitResult[1])
 
             return None
 
-        if isinstance(attrOne, uuid.UUID) and isinstance(attrTwo, uuid.UUID):
-            attrOne = self.__graphHandle.getAttributeFromId(attrOne)
-            attrTwo = self.__graphHandle.getAttributeFromId(attrTwo)
+        if isinstance(data, uuid.UUID):
+            data = self.__graphHandle.getAttributeFromId(data)
+            return data
 
-            return attrOne, attrTwo
+        return None
 
     def connectAttr(self, attrOne, attrTwo):
 
         data = []
 
-        attrOne, attrTwo = self.__get(attrOne, attrTwo)
+        attrOne = self.toInternal(attrOne)
+        attrTwo = self.toInternal(attrTwo)
 
         data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
 
@@ -128,13 +124,17 @@ class EController(EObject):
 
         return data
 
-    def disconnectAttr(self, attrOne, attrTwo, connId=None):
+    def disconnectAttr(self, attrOne, attrTwo):
 
-        if attrOne and attrTwo:
-            attrOne, attrTwo = self.__get(attrOne, attrTwo)
+        attrOne = self.toInternal(attrOne)
+        attrTwo = self.toInternal(attrTwo)
 
-        if connId:
-            self.Message.emit(self.kMessageConnectionBroke.setData(self.__graphHandle.delConnection(connId)))
+        connOne = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(attrOne.Id))
+        connTwo = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(attrTwo.Id))
+
+        if connOne.matches(connTwo):
+            connId = self.__graphHandle.delConnection(connOne.Id)
+            self.Message.emit(self.kMessageConnectionBroke.setData(connId))
 
         return
 
