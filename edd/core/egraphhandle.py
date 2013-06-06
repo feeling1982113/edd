@@ -38,8 +38,6 @@ class EConnection(EObject):
 
 class EGraphHandle(EObject):
 
-    kMessageConnectionBroke = EObject()
-
     def __init__(self):
         EObject.__init__(self)
 
@@ -58,17 +56,6 @@ class EGraphHandle(EObject):
     @property
     def Data(self):
         return self.__nodes, self.__attributes, self.__connections
-
-    def reset(self):
-        keys = self.__nodes.keys()
-        for k in keys:
-            self.delHandle(k)
-
-        self.__nodes = {}
-        self.__attributes = {}
-        self.__connections = {}
-
-        return keys
 
     def getAttributeFromId(self, attrId):
         if not isinstance(attrId, uuid.UUID):
@@ -126,7 +113,7 @@ class EGraphHandle(EObject):
             else:
                 self.disconnectAttribute(attrTwo)
 
-        return
+        return connectionId
 
     def getConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
@@ -177,12 +164,10 @@ class EGraphHandle(EObject):
             attrTwo = self.__nodes[self.__attributes[attributeTwo]].getAttributeById(attributeTwo)
 
             if attrOne.Type.matches(attrTwo.Type):
-                self.Message.emit(self.kMessageInternalError.setData(None))
-                return False
+                return []
 
             if attrOne.Handle.matches(attrTwo.Handle):
-                self.Message.emit(self.kMessageInternalError.setData(None))
-                return False
+                return []
 
             if attrOne.Type.matches(EAttribute.kTypeInput):
                 inputAttr = attrOne
@@ -222,11 +207,9 @@ class EGraphHandle(EObject):
 
             attribute.isConnected = False
 
-            self.Message.emit(self.kMessageConnectionBroke.setData(conn))
+            return conn
 
-            return True
-
-        return False
+        return None
 
 
 

@@ -5,7 +5,6 @@ from PyQt4.QtGui import *
 
 from edd.core.eobject import EObject
 from edd.core.eattribute import EAttribute
-from edd.core.egraphhandle import EGraphHandle
 
 from edd.core.econtroller import EController
 
@@ -224,7 +223,7 @@ class EScene(QGraphicsScene):
             for item in data:
                 if isinstance(item, EEdge):
                     if self.__kCutLine.collidesWithPath(item.shape()):
-                        self.__controller.Handle.delConnection(item.Id)
+                        self.__controller.disconnectAttr(item.Head[ENode.kGuiAttributeId], item.Tail[ENode.kGuiAttributeId])
 
                 elif isinstance(item, ENode):
                     self.__controller.deleteNode(item.Id)
@@ -299,7 +298,7 @@ class EScene(QGraphicsScene):
 
             return
 
-        if message.matches(EGraphHandle.kMessageConnectionBroke):
+        if message.matches(EController.kMessageConnectionBroke):
             if message.getData() in self.__connections.keys():
 
                 connHead = self.__connections[message.getData()].Head
@@ -429,9 +428,9 @@ class EScene(QGraphicsScene):
             self.__kSelected.Item.mute(None)
 
             if isinstance(self.itemAt(mouseEvent.scenePos()), ENode):
-                hitId, hitPoint = self.itemAt(mouseEvent.scenePos()).mapFromPoint(mouseEvent.scenePos())
-
-                self.__controller.connectAttr(self.__pressedAttributes, hitId)
+                if self.__pressedAttributes:
+                    hitId, hitPoint = self.itemAt(mouseEvent.scenePos()).mapFromPoint(mouseEvent.scenePos())
+                    self.__controller.connectAttr(self.__pressedAttributes, hitId)
 
         self.update()
 

@@ -83,23 +83,21 @@ class EController(EObject):
 
     def deleteNode(self, node):
 
-        if isinstance(node, basestring):
-            node = self.getNode(node)
-            theId = self.__graphHandle.delHandle(node.Id)
+        node = self.getNode(node)
 
-        elif isinstance(node, uuid.UUID):
-            theId = self.__graphHandle.delHandle(node)
+        for conn in node.getConnections():
+            self.Message.emit(self.kMessageConnectionBroke.setData(conn))
+
+        theId = self.__graphHandle.delHandle(node.Id)
 
         self.Message.emit(self.kMessageNodeRemoved.setData(theId))
 
-    def connectAttr(self, attrOne, attrTwo):
-
-        data = []
+    def __get(self, attrOne, attrTwo):
 
         if isinstance(attrOne, EAttribute) and isinstance(attrTwo, EAttribute):
-            data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
+            return attrOne, attrTwo
 
-        elif isinstance(attrOne, basestring) and isinstance(attrTwo, basestring):
+        if isinstance(attrOne, basestring) and isinstance(attrTwo, basestring):
 
             nodeOneName, attrOneName = attrOne.split('.')
             nodeTwoName, attrTwoName = attrTwo.split('.')
@@ -108,25 +106,45 @@ class EController(EObject):
             attrTwo = self.getNode(nodeTwoName).getAttributeByName(attrTwoName)
 
             if attrOne and attrTwo:
-                data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
+                return attrOne, attrTwo
 
-        elif isinstance(attrOne, uuid.UUID) and isinstance(attrTwo, uuid.UUID):
+            return None
+
+        if isinstance(attrOne, uuid.UUID) and isinstance(attrTwo, uuid.UUID):
             attrOne = self.__graphHandle.getAttributeFromId(attrOne)
             attrTwo = self.__graphHandle.getAttributeFromId(attrTwo)
 
-            data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
+            return attrOne, attrTwo
+
+    def connectAttr(self, attrOne, attrTwo):
+
+        data = []
+
+        attrOne, attrTwo = self.__get(attrOne, attrTwo)
+
+        data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
 
         self.Message.emit(self.kMessageConnectionMade.setData(data))
 
         return data
+
+    def disconnectAttr(self, attrOne, attrTwo):
+
+        attrOne, attrTwo = self.__get(attrOne, attrTwo)
+
+        print attrOne, attrTwo
+
+        return
 
     def ls(self):
         return [node.Name for node in self.__scene.getNodes().itervalues()]
 
     def reset(self):
 
-        for key in self.__graphHandle.reset():
-            self.Message.emit(self.kMessageNodeRemoved.setData(key))
+        for node in self.ls():
+            self.deleteNode(node)
+
+        print self.__graphHandle.Data
 
     def __getNodeCreateCmd(self, nodeTransform):
 
