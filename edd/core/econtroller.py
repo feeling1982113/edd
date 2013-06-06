@@ -128,9 +128,21 @@ class EController(EObject):
 
     def __getNodeCreateCmd(self, nodeTransform):
 
+        props = {}
+
+        for prop in nodeTransform.Handle.lsProperties():
+            if prop.Type.matches(EAttribute.kTypeFloat):
+                props[prop.Name] = float(prop.Data)
+
+            if prop.Type.matches(EAttribute.kTypeList):
+                props[prop.Name] = [float(item.Data) for item in prop.Data]
+
+            if prop.Type.matches(EAttribute.kTypeString):
+                props[prop.Name] = str(prop.Data)
+
         return dict({'TYPE': nodeTransform.Handle.NodeType,
                      'PX': nodeTransform.scenePos().x(),
-                     'PY': nodeTransform.scenePos().y()})
+                     'PY': nodeTransform.scenePos().y(), 'PROPS': props})
 
     def __getNodePropertySetCmd(self, nodeTransform):
         return
@@ -159,7 +171,11 @@ class EController(EObject):
         loadData = json.loads(open(sceneFile).read())
 
         for nodeName, nodeData in loadData['NODES'].iteritems():
-            self.getTransform(self.createNode(nodeData['TYPE'], nodeName)).setPos(nodeData['PX'], nodeData['PY'])
+            node = self.createNode(nodeData['TYPE'], nodeName)
+            self.getTransform(node).setPos(nodeData['PX'], nodeData['PY'])
+
+            for propName, propData in nodeData['PROPS'].iteritems():
+                node.getAttributeByName(propName).Data = propData
 
         for connData in loadData['CONNECTIONS']:
             self.connectAttr(connData['HEAD'], connData['TAIL'])

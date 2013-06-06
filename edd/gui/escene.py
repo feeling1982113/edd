@@ -292,8 +292,8 @@ class EScene(QGraphicsScene):
         if message.matches(EGraphHandle.kMessageConnectionBroke):
             if message.getData() in self.__connections.keys():
 
-                connHead = self.__connections[message.getData()].Head#[ENode.kGuiAttributeId]
-                connTail = self.__connections[message.getData()].Tail#[ENode.kGuiAttributeId]
+                connHead = self.__connections[message.getData()].Head
+                connTail = self.__connections[message.getData()].Tail
 
                 self.removeItem(self.__connections[message.getData()])
 

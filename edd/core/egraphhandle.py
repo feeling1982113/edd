@@ -149,9 +149,10 @@ class EGraphHandle(EObject):
 
         if self.__attributes.has_key(attributeId):
 
-            self.__attributes[attributeId].Data = value
+            attr = self.__nodes[self.__attributes[attributeId]].getAttributeById(attributeId)
+            attr.Data = value
 
-            if self.__attributes[attributeId].Handle.hasConnections():
+            if attr.Handle.hasConnections():
 
                 for conn in self.__connections.itervalues():
                     conn.update()

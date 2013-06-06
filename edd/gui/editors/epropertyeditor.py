@@ -8,6 +8,7 @@ class EPropertyEditor(QTabWidget):
     def __init__(self, controller):
         QTabWidget.__init__(self)
 
+        self.__controller = controller
         self.__scene = controller.getScene()
 
         self.__scene.onSelectionChanged.connect(self.rebuild)
