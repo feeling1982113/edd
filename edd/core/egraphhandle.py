@@ -55,6 +55,10 @@ class EGraphHandle(EObject):
         if message.matches(ENodeHandle.kMessageAttributeRemoved):
             self.__attributes.pop(message.getData().Id, None)
 
+    @property
+    def Data(self):
+        return self.__nodes, self.__attributes, self.__connections
+
     def reset(self):
         keys = self.__nodes.keys()
         for k in keys:
@@ -64,7 +68,7 @@ class EGraphHandle(EObject):
         self.__attributes = {}
         self.__connections = {}
 
-        return True
+        return keys
 
     def getAttributeFromId(self, attrId):
         if not isinstance(attrId, uuid.UUID):
@@ -156,6 +160,8 @@ class EGraphHandle(EObject):
 
                 for conn in self.__connections.itervalues():
                     conn.update()
+
+            return attr
 
     def connectAttributes(self, attributeOne, attributeTwo, silent=False):
 

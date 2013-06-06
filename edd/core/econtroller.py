@@ -124,7 +124,9 @@ class EController(EObject):
         return [node.Name for node in self.__scene.getNodes().itervalues()]
 
     def reset(self):
-        self.__graphHandle.reset()
+
+        for key in self.__graphHandle.reset():
+            self.Message.emit(self.kMessageNodeRemoved.setData(key))
 
     def __getNodeCreateCmd(self, nodeTransform):
 

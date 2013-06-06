@@ -1,3 +1,4 @@
+import re
 import uuid
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF, QLineF, QRectF
 from PyQt4.QtGui import *
@@ -260,8 +261,19 @@ class EScene(QGraphicsScene):
             self.__kSelected.Item = newNode
 
         if message.matches(EController.kMessageNodeRemoved):
-            self.removeItem(self.__nodes[message.getData()])
+
+            self.__kSelected.Item = None
+            self.onSelectionChanged.emit(type("EData", (EObject,), {'nodeName': '', 'nodeProperties': []}))
+
+            node = self.__nodes[message.getData()]
+
+            #print re.search("^[^_]*", node.Name).group(0)
+            #print re.sub("[^a-zA-Z\d]", "", re.search("^[^_]*", node.Name).group(0))
+            #print re.sub("[^a-zA-Z\d]", "", re.match('.*?([0-9]+)$', node.Name).group(1))
+
+            self.removeItem(node)
             self.__nodes.pop(message.getData(), None)
+
             return
 
         if message.matches(EController.kMessageConnectionMade):

@@ -39,7 +39,6 @@ class EPropertyEditor(QTabWidget):
         propLayout.setContentsMargins(0, 0, 0, 0)
 
         lineEdit = QLineEdit('%s' % prop.Data)
-        # TODO: Add internal data (Need interface :))
         lineEdit.kInternalId = prop.Id
         lineEdit.editingFinished.connect(self.__processLineEdit)
 
