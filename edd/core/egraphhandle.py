@@ -25,24 +25,6 @@ class EGraphHandle(EObject):
     def Data(self):
         return self.__nodes, self.__attributes, self.__connections
 
-    def getAttributeFromId(self, attrId):
-        if not isinstance(attrId, uuid.UUID):
-            raise AttributeError
-
-        if self.__attributes.has_key(attrId):
-            return self.__nodes[self.__attributes[attrId]].getAttributeById(attrId)
-
-        return None
-
-    def getAttributeHandleId(self, attributeId):
-        if not isinstance(attributeId, uuid.UUID):
-            raise AttributeError
-
-        if self.__attributes.has_key(attributeId):
-            return self.__nodes[self.__attributes[attributeId]].Id
-
-        return None
-
     def addHandle(self, handle):
 
         handle.Message.connect(self.__messageFilter)
@@ -97,6 +79,24 @@ class EGraphHandle(EObject):
                 self.disconnectAttribute(attrTwo)
 
         return connectionId
+
+    def getAttributeFromId(self, attrId):
+        if not isinstance(attrId, uuid.UUID):
+            raise AttributeError
+
+        if self.__attributes.has_key(attrId):
+            return self.__nodes[self.__attributes[attrId]].getAttributeById(attrId)
+
+        return None
+
+    def getAttributeHandleId(self, attrId):
+        if not isinstance(attrId, uuid.UUID):
+            raise AttributeError
+
+        if self.__attributes.has_key(attrId):
+            return self.__nodes[self.__attributes[attrId]].Id
+
+        return None
 
     def getConnectionIdFromAttributeId(self, attrId):
 
