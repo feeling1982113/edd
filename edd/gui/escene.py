@@ -430,6 +430,7 @@ class EScene(QGraphicsScene):
                 if self.__pressedAttributes:
                     hitId, hitPoint = self.itemAt(mouseEvent.scenePos()).mapFromPoint(mouseEvent.scenePos())
                     self.__controller.connectAttr(self.__pressedAttributes, hitId)
+                    self.__pressedAttributes = None
 
         self.update()
 

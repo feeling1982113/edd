@@ -16,9 +16,6 @@ class EConnection(EObject):
             self.__tailAttr = head
             self.__headAttr = tail
 
-        #self.__headAttr.Message.connect(self.__messageFilter)
-        #self.__tailAttr.Message.connect(self.__messageFilter)
-
         self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
 
     def update(self):
@@ -104,6 +101,9 @@ class EGraphHandle(EObject):
 
         return nodeId
 
+    def addConnection(self, connection):
+        self.__connections[connection.Id] = connection
+
     def delConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
             attrOne, attrTwo = self.__connections[connectionId].Head, self.__connections[connectionId].Tail
@@ -149,49 +149,6 @@ class EGraphHandle(EObject):
                     conn.update()
 
             return attr
-
-    def connectAttributes(self, attributeOne, attributeTwo, silent=False):
-
-        if isinstance(attributeOne, EAttribute):
-            attributeOne = attributeOne.Id
-
-        if isinstance(attributeTwo, EAttribute):
-            attributeTwo = attributeTwo.Id
-
-        if self.__attributes.has_key(attributeOne) and self.__attributes.has_key(attributeTwo):
-
-            attrOne = self.__nodes[self.__attributes[attributeOne]].getAttributeById(attributeOne)
-            attrTwo = self.__nodes[self.__attributes[attributeTwo]].getAttributeById(attributeTwo)
-
-            if attrOne.Type.matches(attrTwo.Type):
-                return []
-
-            if attrOne.Handle.matches(attrTwo.Handle):
-                return []
-
-            if attrOne.Type.matches(EAttribute.kTypeInput):
-                inputAttr = attrOne
-            else:
-                inputAttr = attrTwo
-
-            if inputAttr.isConnected:
-                self.disconnectAttribute(inputAttr)
-
-            connection = EConnection(attrOne, attrTwo)
-            self.__connections[connection.Id] = connection
-
-            attrOne.isConnected = True
-            attrTwo.isConnected = True
-
-            attrOne.Handle.addConnection(connection.Id)
-            attrTwo.Handle.addConnection(connection.Id)
-
-            if not silent:
-                connection.update()
-
-            return attributeOne, attributeTwo, connection.Id
-
-        return []
 
     def disconnectAttribute(self, attribute):
 

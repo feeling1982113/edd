@@ -7,6 +7,38 @@ from edd.core.enodehandle import ENodeHandle
 from edd.core.egraphhandle import EGraphHandle
 
 
+class EConnection(EObject):
+
+    def __init__(self, head, tail):
+        EObject.__init__(self)
+
+        self.__headAttr = head
+        self.__tailAttr = tail
+
+        if head.Type.matches(EAttribute.kTypeInput):
+            self.__tailAttr = head
+            self.__headAttr = tail
+
+        #self.__headAttr.Message.connect(self.__messageFilter)
+        #self.__tailAttr.Message.connect(self.__messageFilter)
+
+        self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
+
+    def update(self):
+        self.__headAttr.Handle.compute()
+        self.__tailAttr.Handle.compute()
+
+        self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
+
+    @property
+    def Head(self):
+        return self.__headAttr
+
+    @property
+    def Tail(self):
+        return self.__tailAttr
+
+
 class EController(EObject):
 
     kMessageNodeAdded = EObject()
@@ -119,7 +151,7 @@ class EController(EObject):
 
         return None
 
-    def connectAttr(self, attrOne, attrTwo):
+    def __connectAttr(self, attrOne, attrTwo):
 
         data = []
 
@@ -133,6 +165,40 @@ class EController(EObject):
             return True
 
         return False
+
+    def connectAttr(self, attributeOne, attributeTwo, silent=False):
+
+        attrOne = self.toInternal(attributeOne)
+        attrTwo = self.toInternal(attributeTwo)
+
+        if attrOne.Type.matches(attrTwo.Type):
+            return []
+
+        if attrOne.Handle.matches(attrTwo.Handle):
+            return []
+
+        if attrOne.Type.matches(EAttribute.kTypeInput):
+            inputAttr = attrOne
+        else:
+            inputAttr = attrTwo
+
+        if inputAttr.isConnected:
+            self.__graphHandle.disconnectAttribute(inputAttr)
+
+        connection = EConnection(attrOne, attrTwo)
+        self.__graphHandle.addConnection(connection)
+
+        attrOne.isConnected = True
+        attrTwo.isConnected = True
+
+        attrOne.Handle.addConnection(connection.Id)
+        attrTwo.Handle.addConnection(connection.Id)
+
+        if not silent:
+            connection.update()
+
+        self.Message.emit(self.kMessageConnectionMade.setData([attrOne.Id, attrTwo.Id, connection.Id]))
+        return True
 
     def disconnectAttr(self, attrOne, attrTwo):
 
