@@ -60,10 +60,6 @@ class EController(EObject):
         self.__graphHandle = EGraphHandle()
 
     @property
-    def Model(self):
-        return self.__graphHandle.Data
-
-    @property
     def Handle(self):
         return self.__graphHandle
 
