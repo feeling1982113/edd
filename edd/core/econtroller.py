@@ -19,9 +19,6 @@ class EConnection(EObject):
             self.__tailAttr = head
             self.__headAttr = tail
 
-        #self.__headAttr.Message.connect(self.__messageFilter)
-        #self.__tailAttr.Message.connect(self.__messageFilter)
-
         self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
 
     def update(self):

@@ -4,35 +4,6 @@ from edd.core.eattribute import EAttribute
 from edd.core.enodehandle import ENodeHandle
 
 
-class EConnection(EObject):
-
-    def __init__(self, head, tail):
-        EObject.__init__(self)
-
-        self.__headAttr = head
-        self.__tailAttr = tail
-
-        if head.Type.matches(EAttribute.kTypeInput):
-            self.__tailAttr = head
-            self.__headAttr = tail
-
-        self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
-
-    def update(self):
-        self.__headAttr.Handle.compute()
-        self.__tailAttr.Handle.compute()
-
-        self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
-
-    @property
-    def Head(self):
-        return self.__headAttr
-
-    @property
-    def Tail(self):
-        return self.__tailAttr
-
-
 class EGraphHandle(EObject):
 
     def __init__(self):
