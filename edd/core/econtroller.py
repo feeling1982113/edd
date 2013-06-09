@@ -151,7 +151,7 @@ class EController(EObject):
 
         return None
 
-    def connectAttr(self, attributeOne, attributeTwo, silent=False):
+    def connectAttr(self, attributeOne, attributeTwo):
 
         attrOne = self.toInternal(attributeOne)
         attrTwo = self.toInternal(attributeTwo)
@@ -173,9 +173,6 @@ class EController(EObject):
 
         connection = EConnection(attrOne, attrTwo)
         self.__graphHandle.addConnection(connection)
-
-        if not silent:
-            connection.update()
 
         self.Message.emit(self.kMessageConnectionMade.setData([attrOne.Id, attrTwo.Id, connection.Id]))
         return True
