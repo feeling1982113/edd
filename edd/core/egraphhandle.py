@@ -104,6 +104,18 @@ class EGraphHandle(EObject):
     def addConnection(self, connection):
         self.__connections[connection.Id] = connection
 
+        connection.Head.isConnected = True
+        connection.Tail.isConnected = True
+
+        connection.Head.Handle.addConnection(connection.Id)
+        connection.Tail.Handle.addConnection(connection.Id)
+
+    def getConnection(self, connectionId):
+        if self.__connections.has_key(connectionId):
+            return self.__connections[connectionId]
+
+        return None
+
     def delConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
             attrOne, attrTwo = self.__connections[connectionId].Head, self.__connections[connectionId].Tail
@@ -114,12 +126,6 @@ class EGraphHandle(EObject):
                 self.disconnectAttribute(attrTwo)
 
         return connectionId
-
-    def getConnection(self, connectionId):
-        if self.__connections.has_key(connectionId):
-            return self.__connections[connectionId]
-
-        return None
 
     def getConnectionIdFromAttributeId(self, attrId):
 

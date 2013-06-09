@@ -151,21 +151,6 @@ class EController(EObject):
 
         return None
 
-    def __connectAttr(self, attrOne, attrTwo):
-
-        data = []
-
-        attrOne = self.toInternal(attrOne)
-        attrTwo = self.toInternal(attrTwo)
-
-        data = self.__graphHandle.connectAttributes(attrOne, attrTwo)
-
-        if len(data):
-            self.Message.emit(self.kMessageConnectionMade.setData(data))
-            return True
-
-        return False
-
     def connectAttr(self, attributeOne, attributeTwo, silent=False):
 
         attrOne = self.toInternal(attributeOne)
@@ -183,16 +168,11 @@ class EController(EObject):
             inputAttr = attrTwo
 
         if inputAttr.isConnected:
-            self.__graphHandle.disconnectAttribute(inputAttr)
+            conn = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(inputAttr.Id))
+            self.disconnectAttr(conn.Head, conn.Tail)
 
         connection = EConnection(attrOne, attrTwo)
         self.__graphHandle.addConnection(connection)
-
-        attrOne.isConnected = True
-        attrTwo.isConnected = True
-
-        attrOne.Handle.addConnection(connection.Id)
-        attrTwo.Handle.addConnection(connection.Id)
 
         if not silent:
             connection.update()
