@@ -144,6 +144,9 @@ class EController(EObject):
 
         return None
 
+    def fromInternal(self, data):
+        return
+
     def connectAttr(self, attributeOne, attributeTwo):
 
         attrOne = self.toInternal(attributeOne)
