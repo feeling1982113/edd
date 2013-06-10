@@ -172,27 +172,19 @@ class EController(EObject):
         self.__graphHandle.addConnection(connection)
 
         self.Message.emit(self.kMessageConnectionMade.setData([attrOne.Id, attrTwo.Id, connection.Id]))
+
         return True
 
     def disconnectAttr(self, attrOne, attrTwo):
 
-        attrOne = self.toInternal(attrOne)
-        attrTwo = self.toInternal(attrTwo)
+        connections = self.__graphHandle.getConnectionsFromAttributeId(self.toInternal(attrOne).Id)
+        connections.extend(self.__graphHandle.getConnectionsFromAttributeId(self.toInternal(attrTwo).Id))
 
-        attrOneConnections = self.__graphHandle.getConnectionsFromAttributeId(attrOne.Id)
-        attrTwoConnections = self.__graphHandle.getConnectionsFromAttributeId(attrTwo.Id)
-
-        connOne = self.__graphHandle.getConnection()
-        connTwo = self.__graphHandle.getConnection()
-
-        print connOne, connTwo
-
-        if connOne.matches(connTwo):
-            connId = self.__graphHandle.delConnection(connOne.Id)
+        for connId in list(set([x for x in connections if connections.count(x) > 1])):
+            self.__graphHandle.delConnection(self.__graphHandle.getConnection(connId))
             self.Message.emit(self.kMessageConnectionBroke.setData(connId))
-            return True
 
-        return False
+        return True
 
     def ls(self):
         return [node.Name for node in self.__scene.getNodes().itervalues()]
