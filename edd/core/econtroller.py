@@ -152,6 +152,9 @@ class EController(EObject):
         attrOne = self.toInternal(attributeOne)
         attrTwo = self.toInternal(attributeTwo)
 
+        if not attrOne or not attrTwo:
+            return
+
         if attrOne.Type.matches(attrTwo.Type):
             return []
 
