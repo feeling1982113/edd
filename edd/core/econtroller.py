@@ -164,8 +164,9 @@ class EController(EObject):
             inputAttr = attrTwo
 
         if inputAttr.isConnected:
-            conn = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(inputAttr.Id))
-            self.disconnectAttr(conn.Head, conn.Tail)
+            for connId in self.__graphHandle.getConnectionsFromAttributeId(inputAttr.Id):
+                conn = self.__graphHandle.getConnection(connId)
+                self.disconnectAttr(conn.Head, conn.Tail)
 
         connection = EConnection(attrOne, attrTwo)
         self.__graphHandle.addConnection(connection)
@@ -178,8 +179,13 @@ class EController(EObject):
         attrOne = self.toInternal(attrOne)
         attrTwo = self.toInternal(attrTwo)
 
-        connOne = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(attrOne.Id))
-        connTwo = self.__graphHandle.getConnection(self.__graphHandle.getConnectionIdFromAttributeId(attrTwo.Id))
+        attrOneConnections = self.__graphHandle.getConnectionsFromAttributeId(attrOne.Id)
+        attrTwoConnections = self.__graphHandle.getConnectionsFromAttributeId(attrTwo.Id)
+
+        connOne = self.__graphHandle.getConnection()
+        connTwo = self.__graphHandle.getConnection()
+
+        print connOne, connTwo
 
         if connOne.matches(connTwo):
             connId = self.__graphHandle.delConnection(connOne.Id)

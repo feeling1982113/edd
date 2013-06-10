@@ -94,13 +94,15 @@ class EGraphHandle(EObject):
 
         return None
 
-    def getConnectionIdFromAttributeId(self, attrId):
+    def getConnectionsFromAttributeId(self, attrId):
+
+        result = []
 
         for key, value in self.__connections.iteritems():
             if attrId in [value.Head.Id, value.Tail.Id]:
-                return key
+                result.append(key)
 
-        return None
+        return result
 
     def updateHandle(self, handle):
 
@@ -130,7 +132,7 @@ class EGraphHandle(EObject):
 
         if self.__attributes.has_key(attrId):
 
-            conn = self.getConnectionIdFromAttributeId(attrId)
+            conn = self.getConnectionsFromAttributeId(attrId)
 
             attribute.Handle.delConnection(conn)
             self.__connections.pop(conn, None)

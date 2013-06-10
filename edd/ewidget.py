@@ -4,7 +4,6 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
 from edd.core.econtroller import EController
 from edd.gui.eview import EView
 
