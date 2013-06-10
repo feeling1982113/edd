@@ -153,13 +153,13 @@ class EController(EObject):
         attrTwo = self.toInternal(attributeTwo)
 
         if not attrOne or not attrTwo:
-            return
+            return False
 
         if attrOne.Type.matches(attrTwo.Type):
-            return []
+            return False
 
         if attrOne.Handle.matches(attrTwo.Handle):
-            return []
+            return False
 
         if attrOne.Type.matches(EAttribute.kTypeInput):
             inputAttr = attrOne

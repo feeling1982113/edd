@@ -65,14 +65,29 @@ class EGraphHandle(EObject):
 
         return None
 
+    def __disconnectAttribute(self, attribute):
+
+        if isinstance(attribute, EAttribute):
+            attrId = attribute.Id
+
+        if self.__attributes.has_key(attrId):
+
+            for conn in self.getConnectionsFromAttributeId(attrId):
+                attribute.Handle.delConnection(conn)
+                self.__connections.pop(conn, None)
+
+                attribute.isConnected = False
+
+        return None
+
     def delConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
             attrOne, attrTwo = self.__connections[connectionId].Head, self.__connections[connectionId].Tail
 
             if attrOne.Type.matches(EAttribute.kTypeInput):
-                self.disconnectAttribute(attrOne)
+                self.__disconnectAttribute(attrOne)
             else:
-                self.disconnectAttribute(attrTwo)
+                self.__disconnectAttribute(attrTwo)
 
         return connectionId
 
@@ -125,23 +140,7 @@ class EGraphHandle(EObject):
 
             return attr
 
-    def disconnectAttribute(self, attribute):
 
-        if isinstance(attribute, EAttribute):
-            attrId = attribute.Id
-
-        if self.__attributes.has_key(attrId):
-
-            conn = self.getConnectionsFromAttributeId(attrId)
-
-            attribute.Handle.delConnection(conn)
-            self.__connections.pop(conn, None)
-
-            attribute.isConnected = False
-
-            return conn
-
-        return None
 
 
 
