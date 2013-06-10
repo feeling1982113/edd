@@ -114,7 +114,7 @@ class EMainWindow(QMainWindow):
 
         self.createMenus()
 
-        self.createPropertyEditor(eddWidget.View)
+        self.createPropertyEditor(eddWidget.View.Controller)
         self.createLister()
 
     def foo(self):
@@ -130,14 +130,14 @@ class EMainWindow(QMainWindow):
 
         self.createMenu = self.menuBar().addMenu("&View")
 
-    def createPropertyEditor(self, theView):
+    def createPropertyEditor(self, controller):
         dock = QDockWidget("Properties", self)
         dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)
 
         scrollArea = QScrollArea()
         scrollArea.setWidgetResizable(True)
 
-        foo = EPropertyEditor(theView.Scene)
+        foo = EPropertyEditor(controller)
 
         scrollArea.setWidget(foo)
         scrollArea.setMinimumWidth(256)
