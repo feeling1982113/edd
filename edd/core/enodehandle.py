@@ -15,6 +15,9 @@ class ENodeHandle(EObject):
                                                'kTypeList': EAttribute.kTypeList,
                                                'kTypeString': EAttribute.kTypeString})
 
+    kTypeInputAttribute = EObject()
+    kTypeOutputAttribute = EObject()
+
     def __init__(self):
         EObject.__init__(self)
 
@@ -24,6 +27,9 @@ class ENodeHandle(EObject):
         self.IsContainer = False
 
         self.__attributes = {}
+        self.__inputAttributes = []
+        self.__outputAttributes = []
+
         self.__connections = {}
 
         self.__attributeLinks = {}
@@ -38,9 +44,11 @@ class ENodeHandle(EObject):
             self.compute()
             return
 
+        """
         if message.matches(EAttribute.kMessageAttributeGet):
             if message.sender().Type.matches(EAttribute.kTypeGenericOutput):
                 self.compute()
+        """
 
     @property
     def NodeType(self):
@@ -56,13 +64,17 @@ class ENodeHandle(EObject):
         return
 
     def addInputAttribute(self, attrName, attrValue=None):
-        attr = EAttribute(self).create(EAttribute.kTypeGenericInput, attrName, attrValue)
+        attr = EAttribute(self).create(EAttribute.kTypeGeneric, attrName, attrValue)
+
+        self.__inputAttributes.append(attr.Id)
 
         self.addAttribute(attr)
         return attr
 
     def addOutputAttribute(self, attrName, attrValue=None):
-        attr = EAttribute(self).create(EAttribute.kTypeGenericOutput, attrName, attrValue)
+        attr = EAttribute(self).create(EAttribute.kTypeGeneric, attrName, attrValue)
+
+        self.__outputAttributes.append(attr.Id)
 
         self.addAttribute(attr)
         return attr
@@ -144,16 +156,32 @@ class ENodeHandle(EObject):
 
         return False
 
-    def lsAttributes(self, eType=None):
-
-        if eType is not None:
-            if isinstance(eType, list):
-                return [eAttribute for eAttribute in self.__attributes.itervalues() if
-                        eAttribute.Type in eType]
-
-            return [eAttribute for eAttribute in self.__attributes.itervalues() if eAttribute.Type.matches(eType)]
-
+    def lsAttributes(self):
         return [eAttribute for eAttribute in self.__attributes.itervalues()]
+
+    def isInput(self, attributeId):
+        if attributeId in self.__inputAttributes:
+            return True
+
+        return False
+
+    def lsInputAttributes(self):
+        result = []
+
+        for attrId, attr in self.__attributes.iteritems():
+            if attrId in self.__inputAttributes:
+                result.append(attr)
+
+        return result
+
+    def lsOutputAttributes(self):
+        result = []
+
+        for attrId, attr in self.__attributes.iteritems():
+            if attrId in self.__outputAttributes:
+                result.append(attr)
+
+        return result
 
     def lsProperties(self):
 

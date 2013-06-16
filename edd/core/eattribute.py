@@ -3,10 +3,6 @@ from edd.core.eobject import EObject
 
 class EAttribute(EObject):
 
-    kTypeGenericInput = EObject()
-    kTypeGenericOutput = EObject()
-    kTypeGenericProperty = EObject()
-
     kTypeInt = EObject()
     kTypeFloat = EObject()
     kTypeList = EObject()

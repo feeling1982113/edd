@@ -80,11 +80,11 @@ class ENode(QGraphicsObject):
 
         return attributeName
 
-    def __getAttributePosition(self, attrType):
+    def __getAttributePosition(self, opposite=False):
 
         attr_x_pos = 0
 
-        if attrType.matches(EAttribute.kTypeGenericOutput):
+        if opposite:
 
             attr_x_pos = self.__titleRect.width() - self.__attrRect.width()
             rect = self.__attrRect.translated(QPointF(attr_x_pos, self.__out_attr_step))
@@ -104,15 +104,17 @@ class ENode(QGraphicsObject):
 
         return [rect, point]
 
-    def __buildAttribute(self, attribute):
+    def __buildAttribute(self, attribute, opposite=False):
 
+        """
         if not attribute.Type.matches(EAttribute.kTypeGenericInput) and not attribute.Type.matches(EAttribute.kTypeGenericOutput):
 
             self.__properties[attribute.Id] = dict({self.kGuiPropertyId: attribute.Id,
                                                     self.kGuiPropertyName: attribute.Name})
             return
+        """
 
-        data = self.__getAttributePosition(attribute.Type)
+        data = self.__getAttributePosition(opposite)
 
         self.__attributes[data[0]] = dict({self.kGuiAttributeId: attribute.Id,
                                            self.kGuiAttributeType: attribute.Type,
@@ -134,8 +136,11 @@ class ENode(QGraphicsObject):
         self.__out_attr_step = self.__titleRect.height() + self.pen().width()
         self.__in_attr_step = self.__titleRect.height() + self.pen().width()
 
-        for eddAttr in self.__nodeHandle.lsAttributes():
+        for eddAttr in self.__nodeHandle.lsInputAttributes():
             self.__buildAttribute(eddAttr)
+
+        for eddAttr in self.__nodeHandle.lsOutputAttributes():
+            self.__buildAttribute(eddAttr, True)
 
         self.update()
 
