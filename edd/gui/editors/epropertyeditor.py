@@ -43,7 +43,7 @@ class EPropertyEditor(QTabWidget):
         lineEdit.editingFinished.connect(self.__processLineEdit)
 
         propLayout.addWidget(lineEdit, 0, 0)
-        propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
+        #propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
 
         theLayout.setLayout(propLayout)
 
