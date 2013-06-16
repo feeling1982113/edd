@@ -69,14 +69,13 @@ class EPoint(ENode):
 
     def togglePlug(self, plugId):
 
-        id = self.mapFromId(plugId)[ENode.kGuiAttributeId]
+        hiddenId = self.mapFromId(plugId)[ENode.kGuiAttributeId]
 
-        if self.__hiddenAttributes.has_key(id):
-            self.__hiddenAttributes.pop(id, None)
+        if self.__hiddenAttributes.has_key(hiddenId):
+            self.__hiddenAttributes.pop(hiddenId, None)
             return
 
         self.__hiddenAttributes[self.mapFromId(plugId)[ENode.kGuiAttributeId]] = []
-
 
     def mapFromPoint(self, QPoint):
 

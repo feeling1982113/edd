@@ -198,7 +198,7 @@ class EScene(QGraphicsScene):
                         self.__kConnectionDummy.Tail = self.__dummyHead.data()
                         self.__kConnectionDummy.Head = self.__dummyTail.data()
 
-                self.sender().mute(pressedId)
+                #self.sender().mute(pressedId)
 
                 self.__kConnectionDummy.update()
                 self.__kConnectionDummy.show()
