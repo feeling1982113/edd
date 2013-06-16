@@ -1,3 +1,4 @@
+import re
 import uuid
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF, QLineF, QRectF
 from PyQt4.QtGui import *
@@ -160,7 +161,8 @@ class EScene(QGraphicsScene):
         self.addItem(self.__dummyTail)
 
         self.__nodes = {}
-        self.__nodeNames = {}
+        self.__namespace = {}
+        self.__nodeNames = []
         self.__connections = {}
 
         self.__pressedAttributes = None
@@ -237,14 +239,29 @@ class EScene(QGraphicsScene):
 
         return None
 
+    def getValidName(self, name):
+        if name not in [node.Name for node in self.getNodes().values()]:
+            return self.__updateNamespace(name)
+
+        return None
+
+    def __updateNamespace(self, name, remove=False):
+
+        name = name.replace(" ", "_")
+        result = re.search('(\d+)$', r"%s" % name)
+
+        if result:
+            self.__nodeNames.append(re.sub('(\d+)$', "", name))
+            return name
+
+        self.__nodeNames.append("%s_" % name)
+        return "%s_%s" % (name, self.__nodeNames.count('%s_' % name))
+
     def __messageFilter(self, message):
 
         if message.matches(EController.kMessageNodeAdded):
 
             handle, name = message.getData()
-
-            if not name:
-                name = None
 
             if handle.IsContainer:
                 newNode = EPoint(handle)
@@ -252,8 +269,9 @@ class EScene(QGraphicsScene):
                 newNode = ENode(handle)
 
             newNode.setPos(self.__kDummy.scenePos())
+            newNode.Name = self.__updateNamespace(name)
 
-            self.addItem(newNode, name)
+            self.addItem(newNode)
 
             self.__kSelected.Item = newNode
 
@@ -263,9 +281,6 @@ class EScene(QGraphicsScene):
             self.onSelectionChanged.emit(type("EData", (EObject,), {'nodeName': '', 'nodeProperties': []}))
 
             node = self.__nodes[message.getData()]
-
-            if self.__nodeNames.has_key(node.Name):
-                self.__nodeNames.pop(node.Name, None)
 
             self.removeItem(node)
             self.__nodes.pop(message.getData(), None)
@@ -285,9 +300,7 @@ class EScene(QGraphicsScene):
                         isinstance(dataTwo[ENode.kGuiAttributeParent], EPoint)]):
 
                     conn = EEdge(dataOne, dataTwo, message.getData()[2], True)
-
-                    dataOne[ENode.kGuiAttributeParent].togglePlug(message.getData()[0])
-                    dataTwo[ENode.kGuiAttributeParent].togglePlug(message.getData()[1])
+                    conn.Tail[ENode.kGuiAttributeParent].togglePlug(conn.Tail[ENode.kGuiAttributeId])
 
                 else:
                     conn = EEdge(dataOne, dataTwo, message.getData()[2])
@@ -300,8 +313,10 @@ class EScene(QGraphicsScene):
         if message.matches(EController.kMessageConnectionBroke):
             if message.getData() in self.__connections.keys():
 
-                connHead = self.__connections[message.getData()].Head
                 connTail = self.__connections[message.getData()].Tail
+
+                if isinstance(connTail[ENode.kGuiAttributeParent], EPoint):
+                    connTail[ENode.kGuiAttributeParent].togglePlug(connTail[ENode.kGuiAttributeId])
 
                 self.removeItem(self.__connections[message.getData()])
 
@@ -320,22 +335,11 @@ class EScene(QGraphicsScene):
     def getConnections(self):
         return self.__connections
 
-    def addItem(self, graphicsItem, graphicsItemName=None):
+    def addItem(self, graphicsItem):
 
         if self.__isNode(graphicsItem):
             graphicsItem.setZValue(1.0)
             graphicsItem.onPress.connect(self.__onDummyMouseClick)
-
-            baseName = graphicsItem.Name
-
-            if graphicsItemName is None:
-                graphicsItem.Name = "%s_%s" % (graphicsItem.Name,
-                                               len([typeName for typeName in self.__nodeNames.values() if typeName == baseName]) + 1)
-                self.__nodeNames[graphicsItem.Name] = baseName
-
-            else:
-                graphicsItem.Name = graphicsItemName
-                self.__nodeNames[graphicsItemName] = baseName
 
             self.__nodes[graphicsItem.Id] = graphicsItem
 
