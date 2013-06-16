@@ -16,19 +16,18 @@ class EAttribute(EObject):
     def __init__(self, handle):
         EObject.__init__(self)
 
-        self.__type = None
         self.__isConnected = False
         self.__isArray = False
 
+        self.__attrType = None
         self.__attrName = None
         self.__attrData = None
-        self.__handle = handle
 
-        self.__childArray = []
+        self.__handle = handle
 
     def create(self, attributeType, attributeName, attributeData=None):
 
-        self.__type = attributeType
+        self.__attrType = attributeType
         self.__attrName = attributeName
         self.__attrData = attributeData
 
@@ -39,7 +38,7 @@ class EAttribute(EObject):
 
     @property
     def Type(self):
-        return self.__type
+        return self.__attrType
 
     @property
     def Name(self):
