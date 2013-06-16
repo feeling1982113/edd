@@ -162,6 +162,12 @@ class EController(EObject):
         if attrOne.Handle.matches(attrTwo.Handle):
             return False
 
+        if attrOne.Handle.isInput(attrOne.Id) and attrTwo.Handle.isInput(attrTwo.Id):
+            return False
+
+        if attrOne.Handle.isOutput(attrOne.Id) and attrTwo.Handle.isOutput(attrTwo.Id):
+            return False
+
         if attrOne.Handle.isInput(attrOne.Id):
             inputAttr = attrOne
             outputAttr = attrTwo

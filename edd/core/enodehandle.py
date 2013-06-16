@@ -159,12 +159,6 @@ class ENodeHandle(EObject):
     def lsAttributes(self):
         return [eAttribute for eAttribute in self.__attributes.itervalues()]
 
-    def isInput(self, attributeId):
-        if attributeId in self.__inputAttributes:
-            return True
-
-        return False
-
     def lsInputAttributes(self):
         result = []
 
@@ -174,6 +168,12 @@ class ENodeHandle(EObject):
 
         return result
 
+    def isInput(self, attributeId):
+        if attributeId in self.__inputAttributes:
+            return True
+
+        return False
+
     def lsOutputAttributes(self):
         result = []
 
@@ -182,6 +182,12 @@ class ENodeHandle(EObject):
                 result.append(attr)
 
         return result
+
+    def isOutput(self, attributeId):
+        if attributeId in self.__outputAttributes:
+            return True
+
+        return False
 
     def lsProperties(self):
 
