@@ -25,11 +25,6 @@ class EEdge(QGraphicsObject):
         self.__headPoint = QPointF(0.0, 0.0)
         self.__tailPoint = QPointF(0.0, 0.0)
 
-        if head[ENode.kGuiAttributeType] and tail[ENode.kGuiAttributeType]:
-            if head[ENode.kGuiAttributeType].matches(EAttribute.kTypeGenericInput):
-                self.__head = tail
-                self.__tail = head
-
         self.__head[ENode.kGuiAttributeParent].onMove.connect(self.update)
         self.__tail[ENode.kGuiAttributeParent].onMove.connect(self.update)
 

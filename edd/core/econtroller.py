@@ -15,7 +15,7 @@ class EConnection(EObject):
         self.__headAttr = head
         self.__tailAttr = tail
 
-        if head.Type.matches(EAttribute.kTypeGenericInput):
+        if head.Handle.isInput(head.Id):
             self.__tailAttr = head
             self.__headAttr = tail
 
@@ -159,26 +159,25 @@ class EController(EObject):
         if not attrOne or not attrTwo:
             return False
 
-        if attrOne.Type.matches(attrTwo.Type):
-            return False
-
         if attrOne.Handle.matches(attrTwo.Handle):
             return False
 
-        if attrOne.Type.matches(EAttribute.kTypeGenericInput):
+        if attrOne.Handle.isInput(attrOne.Id):
             inputAttr = attrOne
+            outputAttr = attrTwo
         else:
             inputAttr = attrTwo
+            outputAttr = attrOne
 
         if inputAttr.isConnected:
             for connId in self.__graphHandle.getConnectionsFromAttributeId(inputAttr.Id):
                 conn = self.__graphHandle.getConnection(connId)
                 self.disconnectAttr(conn.Head, conn.Tail)
 
-        connection = EConnection(attrOne, attrTwo)
+        connection = EConnection(outputAttr, inputAttr)
         self.__graphHandle.addConnection(connection)
 
-        self.Message.emit(self.kMessageConnectionMade.setData([attrOne.Id, attrTwo.Id, connection.Id]))
+        self.Message.emit(self.kMessageConnectionMade.setData([outputAttr.Id, inputAttr.Id, connection.Id]))
 
         return True
 
