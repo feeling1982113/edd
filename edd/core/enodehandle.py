@@ -157,7 +157,7 @@ class ENodeHandle(EObject):
         return False
 
     def lsAttributes(self):
-        return [eAttribute for eAttribute in self.__attributes.itervalues()]
+        return self.__attributes.values()
 
     def lsInputAttributes(self):
         result = []
