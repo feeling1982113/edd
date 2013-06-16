@@ -72,12 +72,6 @@ class EAttribute(EObject):
         self.__attrData = attrData
         self.Message.emit(self.kMessageAttributeSet)
 
-    def isInput(self):
-        return self.__type.matches(EAttribute.kTypeGenericInput)
-
-    def isOutput(self):
-        return self.__type.matches(EAttribute.kTypeGenericOutput)
-
     @property
     def isArray(self):
         return self.__isArray

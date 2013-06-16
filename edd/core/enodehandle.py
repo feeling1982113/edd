@@ -63,16 +63,24 @@ class ENodeHandle(EObject):
     def hasAttributeOfType(self, eAttributeType):
         return
 
-    def addInputAttribute(self, attrName, attrValue=None):
-        attr = EAttribute(self).create(EAttribute.kTypeGeneric, attrName, attrValue)
+    def addInputAttribute(self, attrName, attrType=None, attrValue=None):
+
+        if attrType is None:
+            attrType = EAttribute.kTypeGeneric
+
+        attr = EAttribute(self).create(attrType, attrName, attrValue)
 
         self.__inputAttributes.append(attr.Id)
 
         self.addAttribute(attr)
         return attr
 
-    def addOutputAttribute(self, attrName, attrValue=None):
-        attr = EAttribute(self).create(EAttribute.kTypeGeneric, attrName, attrValue)
+    def addOutputAttribute(self, attrName, attrType=None, attrValue=None):
+
+        if attrType is None:
+            attrType = EAttribute.kTypeGeneric
+
+        attr = EAttribute(self).create(attrType, attrName, attrValue)
 
         self.__outputAttributes.append(attr.Id)
 
