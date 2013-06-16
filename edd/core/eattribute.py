@@ -5,11 +5,13 @@ class EAttribute(EObject):
 
     kTypeGenericInput = EObject()
     kTypeGenericOutput = EObject()
+    kTypeGenericProperty = EObject()
 
     kTypeInt = EObject()
     kTypeFloat = EObject()
     kTypeList = EObject()
     kTypeString = EObject()
+    kTypeGeneric = EObject()
 
     kMessageAttributeSet = EObject()
     kMessageAttributeGet = EObject()
@@ -20,18 +22,19 @@ class EAttribute(EObject):
 
         self.__type = None
         self.__isConnected = False
+        self.__isArray = False
 
         self.__attrName = None
         self.__attrData = None
         self.__handle = handle
+
+        self.__childArray = []
 
     def create(self, attributeType, attributeName, attributeData=None):
 
         self.__type = attributeType
         self.__attrName = attributeName
         self.__attrData = attributeData
-
-        self.__isArray = False
 
         if attributeType.matches(EAttribute.kTypeList):
             self.__isArray = True
