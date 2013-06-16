@@ -74,6 +74,7 @@ class EController(EObject):
         return self.__scene
 
     def registerNode(self, nodeName, nodeHandle):
+        nodeHandle.NodeType = nodeName
         self.__regNodes[nodeName] = nodeHandle
 
     def getNode(self, theNode):
@@ -103,6 +104,9 @@ class EController(EObject):
 
         if self.__regNodes.has_key(nodeType):
             nodeHandle = self.__graphHandle.addHandle(self.__regNodes[nodeType]())
+
+            if nodeName is None:
+                nodeName = nodeHandle.NodeType
 
             self.Message.emit(self.kMessageNodeAdded.setData([nodeHandle, nodeName]))
 
@@ -197,8 +201,6 @@ class EController(EObject):
         for node in self.ls():
             self.deleteNode(node)
 
-        print self.__graphHandle.Data
-
     def __getNodeCreateCmd(self, nodeTransform):
 
         props = {}
@@ -213,7 +215,7 @@ class EController(EObject):
             if prop.Type.matches(EAttribute.kTypeString):
                 props[prop.Name] = str(prop.Data)
 
-        return dict({'TYPE': nodeTransform.Handle.NodeType,
+        return dict({'REQUEST': nodeTransform.Handle.NodeType,
                      'PX': nodeTransform.scenePos().x(),
                      'PY': nodeTransform.scenePos().y(), 'PROPS': props})
 
@@ -244,7 +246,8 @@ class EController(EObject):
         loadData = json.loads(open(sceneFile).read())
 
         for nodeName, nodeData in loadData['NODES'].iteritems():
-            node = self.createNode(nodeData['TYPE'], nodeName)
+
+            node = self.createNode(nodeData['REQUEST'], nodeName)
             self.getTransform(node).setPos(nodeData['PX'], nodeData['PY'])
 
             for propName, propData in nodeData['PROPS'].iteritems():

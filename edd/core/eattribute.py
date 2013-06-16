@@ -3,20 +3,6 @@ from edd.core.eobject import EObject
 
 class EAttribute(EObject):
 
-    """
-
-    .. glossary::
-
-        kTypeInput
-        kTypeOutput
-
-        kTypeInt
-        kTypeFloat
-        kTypeList
-        kTypeString
-
-    """
-
     kTypeInput = EObject()
     kTypeOutput = EObject()
 
@@ -54,12 +40,6 @@ class EAttribute(EObject):
 
     @property
     def Type(self):
-        """
-
-           :param flab_nickers: a series of under garments to process
-           :param has_polka_dots: default False
-           :param needs_pressing: default False, Whether the list of garments should all be pressed
-           """
         return self.__type
 
     @property
@@ -105,29 +85,6 @@ class EAttribute(EObject):
 
     @property
     def isConnected(self):
-        """This function does something.
-
-        Args:
-           name (str):  The name to use.
-
-        Kwargs:
-           state (bool): Current state to be in.
-
-        Returns:
-           int.  The return code::
-
-              0 -- Success!
-
-        A really great idea.  A way you might use me is
-
-        >>> print public_fn_with_googley_docstring(name='foo', state=None)
-        0
-
-        .. warning::
-
-            BTW, this always returns 0.  **NEVER** use with :class:`MyPublicClass`.
-
-        """
         return self.__isConnected
 
     @isConnected.setter
