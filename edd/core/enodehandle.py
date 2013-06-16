@@ -39,7 +39,7 @@ class ENodeHandle(EObject):
             return
 
         if message.matches(EAttribute.kMessageAttributeGet):
-            if message.sender().Type.matches(EAttribute.kTypeOutput):
+            if message.sender().Type.matches(EAttribute.kTypeGenericOutput):
                 self.compute()
 
     @property
@@ -56,13 +56,13 @@ class ENodeHandle(EObject):
         return
 
     def addInputAttribute(self, attrName, attrValue=None):
-        attr = EAttribute(self).create(EAttribute.kTypeInput, attrName, attrValue)
+        attr = EAttribute(self).create(EAttribute.kTypeGenericInput, attrName, attrValue)
 
         self.addAttribute(attr)
         return attr
 
     def addOutputAttribute(self, attrName, attrValue=None):
-        attr = EAttribute(self).create(EAttribute.kTypeOutput, attrName, attrValue)
+        attr = EAttribute(self).create(EAttribute.kTypeGenericOutput, attrName, attrValue)
 
         self.addAttribute(attr)
         return attr

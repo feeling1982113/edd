@@ -15,7 +15,7 @@ class EConnection(EObject):
         self.__headAttr = head
         self.__tailAttr = tail
 
-        if head.Type.matches(EAttribute.kTypeInput):
+        if head.Type.matches(EAttribute.kTypeGenericInput):
             self.__tailAttr = head
             self.__headAttr = tail
 
@@ -165,7 +165,7 @@ class EController(EObject):
         if attrOne.Handle.matches(attrTwo.Handle):
             return False
 
-        if attrOne.Type.matches(EAttribute.kTypeInput):
+        if attrOne.Type.matches(EAttribute.kTypeGenericInput):
             inputAttr = attrOne
         else:
             inputAttr = attrTwo

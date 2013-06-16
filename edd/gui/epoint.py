@@ -21,8 +21,8 @@ class EPoint(ENode):
         self.__group = QGraphicsItemGroup()
         self.__group.addToGroup(QGraphicsPolygonItem(self.__polygon))
 
-        self.__buildAttributes(self.Handle.lsAttributes(EAttribute.kTypeInput))
-        self.__buildAttributes(self.Handle.lsAttributes(EAttribute.kTypeOutput), True)
+        self.__buildAttributes(self.Handle.lsAttributes(EAttribute.kTypeGenericInput))
+        self.__buildAttributes(self.Handle.lsAttributes(EAttribute.kTypeGenericOutput), True)
 
         self.__muted = None
 

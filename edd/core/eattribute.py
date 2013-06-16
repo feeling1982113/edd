@@ -3,8 +3,8 @@ from edd.core.eobject import EObject
 
 class EAttribute(EObject):
 
-    kTypeInput = EObject()
-    kTypeOutput = EObject()
+    kTypeGenericInput = EObject()
+    kTypeGenericOutput = EObject()
 
     kTypeInt = EObject()
     kTypeFloat = EObject()
@@ -74,10 +74,10 @@ class EAttribute(EObject):
         self.Message.emit(self.kMessageAttributeSet)
 
     def isInput(self):
-        return self.__type.matches(EAttribute.kTypeInput)
+        return self.__type.matches(EAttribute.kTypeGenericInput)
 
     def isOutput(self):
-        return self.__type.matches(EAttribute.kTypeOutput)
+        return self.__type.matches(EAttribute.kTypeGenericOutput)
 
     @property
     def isArray(self):

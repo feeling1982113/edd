@@ -194,7 +194,7 @@ class EScene(QGraphicsScene):
                     self.__kConnectionDummy.Head = self.__dummyHead.data()
                     self.__kConnectionDummy.Tail = self.__dummyTail.data()
 
-                    if self.__controller.Handle.getAttributeFromId(pressedId).Type.matches(EAttribute.kTypeInput):
+                    if self.__controller.Handle.getAttributeFromId(pressedId).Type.matches(EAttribute.kTypeGenericInput):
                         self.__kConnectionDummy.Tail = self.__dummyHead.data()
                         self.__kConnectionDummy.Head = self.__dummyTail.data()
 
