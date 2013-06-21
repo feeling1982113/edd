@@ -9,13 +9,14 @@ class ENodeHandle(EObject):
     kMessageAttributeAdded = EObject()
     kMessageAttributeRemoved = EObject()
 
+    kMessageAttributeSet = EObject()
+    kMessageAttributeGet = EObject()
+    kMessageAttributeRenamed = EObject()
+
     EProperty = type('EProperty', (EObject,), {'kTypeInt': EAttribute.kTypeInt,
                                                'kTypeFloat': EAttribute.kTypeFloat,
                                                'kTypeList': EAttribute.kTypeList,
                                                'kTypeString': EAttribute.kTypeString})
-
-    kTypeInputAttribute = EObject()
-    kTypeOutputAttribute = EObject()
 
     def __init__(self):
         EObject.__init__(self)
@@ -38,7 +39,8 @@ class ENodeHandle(EObject):
         return
 
     def __messageFilter(self, message):
-        return
+        #cwd.getNode('Directory_1').getAttributeByName('Input').Data = "Simple_Data"
+        print message
 
     @property
     def NodeType(self):
@@ -101,7 +103,7 @@ class ENodeHandle(EObject):
         if not isinstance(eAttribute, EAttribute):
             raise
 
-        if self.getAttributeByName(eAttribute.Name):
+        if self.getAttribute(eAttribute.Name):
             raise AttributeError("Attribute name is not unique! <%s.%s>" % (self.Name, eAttribute.Name))
 
         self.__attributes[eAttribute.Id] = eAttribute
@@ -120,6 +122,18 @@ class ENodeHandle(EObject):
             self.__attributes.pop(attribute.Id, None)
             self.Message.emit(ENodeHandle.kMessageAttributeRemoved.setData(attribute))
 
+    def getAttribute(self, attribute):
+
+        if isinstance(attribute, basestring):
+            for attr in self.__attributes.itervalues():
+                if attribute == attr.Name:
+                    return attr
+
+        if isinstance(attribute, EAttribute):
+            return self.getAttributeById(attribute.Id)
+
+        return None
+
     def getAttributeById(self, attributeId):
 
         if self.__attributeLinks.has_key(attributeId):
@@ -127,14 +141,6 @@ class ENodeHandle(EObject):
 
         if self.__attributes.has_key(attributeId):
             return self.__attributes[attributeId]
-
-        return None
-
-    def getAttributeByName(self, attributeName):
-
-        for attr in self.__attributes.itervalues():
-            if attributeName == attr.Name:
-                return attr
 
         return None
 

@@ -139,7 +139,7 @@ class EController(EObject):
                     node = self.getNode(splitResult[0])
 
                     if splitResult[1] in [attr.Name for attr in node.lsAttributes()]:
-                        return node.getAttributeByName(splitResult[1])
+                        return node.getAttribute(splitResult[1])
 
             return None
 
@@ -257,7 +257,7 @@ class EController(EObject):
             self.getTransform(node).setPos(nodeData['PX'], nodeData['PY'])
 
             for propName, propData in nodeData['PROPS'].iteritems():
-                node.getAttributeByName(propName).Data = propData
+                node.getAttribute(propName).Data = propData
 
         for connData in loadData['CONNECTIONS']:
             self.connectAttr(connData['HEAD'], connData['TAIL'])

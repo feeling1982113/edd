@@ -23,7 +23,7 @@ class EAttribute(EObject):
         self.__attrName = None
         self.__attrData = None
 
-        self.__handle = handle
+        self.__attrHandle = handle
 
     def create(self, attributeType, attributeName, attributeData=None):
 
@@ -51,16 +51,16 @@ class EAttribute(EObject):
 
     @property
     def Handle(self):
-        return self.__handle
+        return self.__attrHandle
 
     @Handle.setter
     def Handle(self, handle):
-        self.__handle = handle
+        self.__attrHandle = handle
 
     @property
     def Data(self):
         if self.__isArray:
-            self.__attrData = self.__handle.getAttributeById(self.Id)
+            self.__attrData = self.__attrHandle.getAttributeById(self.Id)
 
         self.Message.emit(self.kMessageAttributeGet.setData(self.Id))
 
