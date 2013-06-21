@@ -6,7 +6,6 @@ from edd.core.eattribute import EAttribute
 class ENodeHandle(EObject):
 
     # Messages
-    kMessageAttributeMarked = EObject()
     kMessageAttributeAdded = EObject()
     kMessageAttributeRemoved = EObject()
 
@@ -39,16 +38,7 @@ class ENodeHandle(EObject):
         return
 
     def __messageFilter(self, message):
-
-        if message.matches(EAttribute.kMessageAttributeSet) and self.IsStatic:
-            self.compute()
-            return
-
-        """
-        if message.matches(EAttribute.kMessageAttributeGet):
-            if message.sender().Type.matches(EAttribute.kTypeGenericOutput):
-                self.compute()
-        """
+        return
 
     @property
     def NodeType(self):

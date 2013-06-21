@@ -47,7 +47,7 @@ class EAttribute(EObject):
     @Name.setter
     def Name(self, name):
         self.__attrName = name
-        self.Message.emit(self.kMessageAttributeRenamed)
+        self.Message.emit(self.kMessageAttributeRenamed.setData(self.Id))
 
     @property
     def Handle(self):
@@ -62,14 +62,14 @@ class EAttribute(EObject):
         if self.__isArray:
             self.__attrData = self.__handle.getAttributeById(self.Id)
 
-        self.Message.emit(self.kMessageAttributeGet)
+        self.Message.emit(self.kMessageAttributeGet.setData(self.Id))
 
         return self.__attrData
 
     @Data.setter
     def Data(self, attrData):
         self.__attrData = attrData
-        self.Message.emit(self.kMessageAttributeSet)
+        self.Message.emit(self.kMessageAttributeSet.setData(self.Id))
 
     @property
     def isArray(self):

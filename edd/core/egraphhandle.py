@@ -84,7 +84,7 @@ class EGraphHandle(EObject):
         if self.__connections.has_key(connectionId):
             attrOne, attrTwo = self.__connections[connectionId].Head, self.__connections[connectionId].Tail
 
-            if attrOne.Type.matches(EAttribute.kTypeGenericInput):
+            if attrOne.Handle.isInput(attrOne.Id):
                 self.__disconnectAttribute(attrOne)
             else:
                 self.__disconnectAttribute(attrTwo)

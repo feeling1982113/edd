@@ -19,13 +19,14 @@ class EConnection(EObject):
             self.__tailAttr = head
             self.__headAttr = tail
 
-        self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
+        self.__headAttr.Message.connect(self.__messageFilter)
+        self.__tailAttr.Message.connect(self.__messageFilter)
+
+    def __messageFilter(self, message):
+        print message
 
     def update(self):
-        self.__headAttr.Handle.compute()
-        self.__tailAttr.Handle.compute()
-
-        self.__tailAttr.Data = self.__headAttr.Handle.getAttributeById(self.__headAttr.Id).Data
+        return
 
     @property
     def Head(self):
