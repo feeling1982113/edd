@@ -36,6 +36,8 @@ class ENodeHandle(EObject):
 
         self.__propertyIndexList = {}
 
+        #self.Message.connect(self.__messageFilter)
+
         return
 
     def __messageFilter(self, message):
@@ -109,8 +111,6 @@ class ENodeHandle(EObject):
         self.__attributes[eAttribute.Id] = eAttribute
         eAttribute.Handle = self
 
-        eAttribute.Message.connect(self.__messageFilter)
-
         self.Message.emit(self.kMessageAttributeAdded.setData(eAttribute))
 
     def delAttribute(self, attribute):
@@ -132,7 +132,20 @@ class ENodeHandle(EObject):
         if isinstance(attribute, EAttribute):
             return self.getAttributeById(attribute.Id)
 
+        if isinstance(attribute, uuid.UUID):
+            return self.getAttributeById(attribute)
+
         return None
+
+    def setAttribute(self, attribute, value):
+        attr = self.getAttribute(attribute)
+
+        if attr:
+            attr.Data = value
+            self.Message.emit(self.kMessageAttributeSet.setData(attr.Id))
+            return True
+
+        return False
 
     def getAttributeById(self, attributeId):
 

@@ -19,11 +19,11 @@ class EConnection(EObject):
             self.__tailAttr = head
             self.__headAttr = tail
 
-        self.__headAttr.Message.connect(self.__messageFilter)
-        self.__tailAttr.Message.connect(self.__messageFilter)
+        self.__headAttr.Handle.Message.connect(self.__messageFilter)
+        self.__tailAttr.Handle.Message.connect(self.__messageFilter)
 
     def __messageFilter(self, message):
-        print message
+        pass
 
     def update(self):
         return
