@@ -47,7 +47,9 @@ class ENodeHandle(EObject):
         if not self.__isConnected():
             return
 
-        print self.__getAffectedBy(message.getData())
+        affectedId = self.__getAffectedBy(message.getData())
+        if affectedId:
+            self.compute()
 
     def __isConnected(self):
         return any([attr.IsConnected for attr in self.__attributes.values() if attr.Id in self.__outputAttributes])

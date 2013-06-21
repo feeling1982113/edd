@@ -21,6 +21,12 @@ class EGraphHandle(EObject):
         if message.matches(ENodeHandle.kMessageAttributeRemoved):
             self.__attributes.pop(message.getData().Id, None)
 
+    def isHandle(self, internalId):
+        return self.__nodes.has_key(internalId)
+
+    def isAttribute(self, internalId):
+        return self.__attributes.has_key(internalId)
+
     def addHandle(self, handle):
 
         handle.Message.connect(self.__messageFilter)

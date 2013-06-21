@@ -1,3 +1,4 @@
+import functools
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from edd.core.eattribute import EAttribute
@@ -13,9 +14,11 @@ class EPropertyEditor(QTabWidget):
 
         self.__scene.onSelectionChanged.connect(self.rebuild)
 
-    def __processLineEdit(self):
+    def __processLineEdit(self, propHandleId, propId):
         #self.__controller.Handle.updateAttribute(self.sender().kInternalId, self.sender().text())
-        print self.__controller.fromInternal(self.sender().kInternalId)
+        #print self.__controller.fromInternal(self.sender().kInternalId)
+        node = self.__controller.getNode(propHandleId)
+        node.setAttribute(node.getAttribute(propId), self.sender().text())
 
     def rebuild(self, data):
 
@@ -40,8 +43,7 @@ class EPropertyEditor(QTabWidget):
         propLayout.setContentsMargins(0, 0, 0, 0)
 
         lineEdit = QLineEdit('%s' % prop.Data)
-        lineEdit.kInternalId = prop.Id
-        lineEdit.editingFinished.connect(self.__processLineEdit)
+        lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, prop.Handle.Id, prop.Id))
 
         propLayout.addWidget(lineEdit, 0, 0)
         #propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
@@ -63,8 +65,7 @@ class EPropertyEditor(QTabWidget):
             #lineEdit.setAlignment(Qt.AlignRight)
 
             lineEdit.setText("%s" % propItem.Data)
-            lineEdit.kInternalId = propItem.Id
-            lineEdit.editingFinished.connect(self.__processLineEdit)
+            lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id, propItem.Id))
             propLayout.addWidget(lineEdit, 0, index)
 
         theLayout.setLayout(propLayout)
