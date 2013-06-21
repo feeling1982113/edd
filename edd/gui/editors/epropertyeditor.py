@@ -14,7 +14,8 @@ class EPropertyEditor(QTabWidget):
         self.__scene.onSelectionChanged.connect(self.rebuild)
 
     def __processLineEdit(self):
-        self.__controller.Handle.updateAttribute(self.sender().kInternalId, self.sender().text())
+        #self.__controller.Handle.updateAttribute(self.sender().kInternalId, self.sender().text())
+        print self.__controller.fromInternal(self.sender().kInternalId)
 
     def rebuild(self, data):
 

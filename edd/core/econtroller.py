@@ -23,6 +23,8 @@ class EConnection(EObject):
         self.__tailAttr.Handle.Message.connect(self.__messageFilter)
 
     def __messageFilter(self, message):
+
+        #print self.__headAttr.Handle.isInput(message.getData())
         pass
 
     def update(self):
@@ -150,6 +152,10 @@ class EController(EObject):
         return None
 
     def fromInternal(self, data):
+
+        if isinstance(data, uuid.UUID):
+            print self.__graphHandle.getAttributeFromId(data)
+
         return
 
     def connectAttr(self, attributeOne, attributeTwo):
@@ -176,7 +182,7 @@ class EController(EObject):
             inputAttr = attrTwo
             outputAttr = attrOne
 
-        if inputAttr.isConnected:
+        if inputAttr.IsConnected:
             for connId in self.__graphHandle.getConnectionsFromAttributeId(inputAttr.Id):
                 conn = self.__graphHandle.getConnection(connId)
                 self.disconnectAttr(conn.Head, conn.Tail)

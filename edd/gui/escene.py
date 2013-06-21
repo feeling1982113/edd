@@ -222,12 +222,13 @@ class EScene(QGraphicsScene):
             self.__isEditMode = True
 
             for item in data:
+                if isinstance(item, ENode):
+                    self.__controller.deleteNode(item.Id)
+                    continue
+
                 if isinstance(item, EEdge):
                     if self.__kCutLine.collidesWithPath(item.shape()):
                         self.__controller.disconnectAttr(item.Head[ENode.kGuiAttributeId], item.Tail[ENode.kGuiAttributeId])
-
-                elif isinstance(item, ENode):
-                    self.__controller.deleteNode(item.Id)
         else:
             self.__isEditMode = False
 

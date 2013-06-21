@@ -30,19 +30,35 @@ class ENodeHandle(EObject):
         self.__inputAttributes = []
         self.__outputAttributes = []
 
+        self.__attributesNetwork = {}
+
         self.__connections = {}
 
         self.__attributeLinks = {}
 
         self.__propertyIndexList = {}
 
-        #self.Message.connect(self.__messageFilter)
+        self.Message.connect(self.__messageFilter)
 
         return
 
     def __messageFilter(self, message):
-        #cwd.getNode('Directory_1').getAttributeByName('Input').Data = "Simple_Data"
-        print message
+
+        if not self.__isConnected():
+            return
+
+        print self.__getAffectedBy(message.getData())
+
+    def __isConnected(self):
+        return any([attr.IsConnected for attr in self.__attributes.values() if attr.Id in self.__outputAttributes])
+
+    def __getAffectedBy(self, attributeId):
+
+        for key, value in self.__attributesNetwork.iteritems():
+            if attributeId in value:
+                return key
+
+        return None
 
     @property
     def NodeType(self):
@@ -156,6 +172,13 @@ class ENodeHandle(EObject):
             return self.__attributes[attributeId]
 
         return None
+
+    def attributeAffects(self, inputAttr, outputAttr):
+        if self.__attributesNetwork.has_key(outputAttr.Id):
+            self.__attributesNetwork[outputAttr.Id].append(inputAttr.Id)
+
+        else:
+            self.__attributesNetwork[outputAttr.Id] = [inputAttr.Id]
 
     def addConnection(self, connectionId):
         self.__connections[connectionId] = True

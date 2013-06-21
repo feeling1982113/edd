@@ -53,8 +53,8 @@ class EGraphHandle(EObject):
     def addConnection(self, connection):
         self.__connections[connection.Id] = connection
 
-        connection.Head.isConnected = True
-        connection.Tail.isConnected = True
+        connection.Head.IsConnected = True
+        connection.Tail.IsConnected = True
 
         connection.Head.Handle.addConnection(connection.Id)
         connection.Tail.Handle.addConnection(connection.Id)
@@ -76,7 +76,7 @@ class EGraphHandle(EObject):
                 attribute.Handle.delConnection(conn)
                 self.__connections.pop(conn, None)
 
-                attribute.isConnected = False
+                attribute.IsConnected = False
 
         return None
 

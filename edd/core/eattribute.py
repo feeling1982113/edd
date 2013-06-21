@@ -64,15 +64,15 @@ class EAttribute(EObject):
         self.__attrData = attrData
 
     @property
-    def isArray(self):
+    def IsArray(self):
         return self.__isArray
 
     @property
-    def isConnected(self):
+    def IsConnected(self):
         return self.__isConnected
 
-    @isConnected.setter
-    def isConnected(self, state):
+    @IsConnected.setter
+    def IsConnected(self, state):
         self.__isConnected = state
 
     def clear(self):
