@@ -14,10 +14,6 @@ class EPropertyEditor(QTabWidget):
 
         self.__scene.onSelectionChanged.connect(self.rebuild)
 
-    def __processLineEdit(self, propHandleId, propId):
-        node = self.__controller.getNode(propHandleId)
-        node.setAttribute(node.getAttribute(propId), self.sender().text())
-
     def rebuild(self, data):
 
         self.clear()
@@ -33,6 +29,19 @@ class EPropertyEditor(QTabWidget):
 
         return
 
+    def __processLineEdit(self, propHandleId, propId, propData):
+        print propData
+        node = self.__controller.getNode(propHandleId)
+        node.setAttribute(node.getAttribute(propId), self.sender().text())
+
+    def __setValidator(self, control, prop):
+
+        if prop.Type.matches(EAttribute.kTypeInt):
+            control.setValidator(QIntValidator(0, 10000000, self))
+
+        if prop.Type.matches(EAttribute.kTypeFloat):
+            control.setValidator(QDoubleValidator(0, 100000000, 6, self))
+
     def __getControl(self, prop):
 
         theLayout = QGroupBox('%s' % prop.Name)
@@ -41,7 +50,10 @@ class EPropertyEditor(QTabWidget):
         propLayout.setContentsMargins(0, 0, 0, 0)
 
         lineEdit = QLineEdit('%s' % prop.Data)
-        lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, prop.Handle.Id, prop.Id))
+        self.__setValidator(lineEdit, prop)
+
+        lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, prop.Handle.Id,
+                                                           prop.Id, prop.Data))
 
         propLayout.addWidget(lineEdit, 0, 0)
         #propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
@@ -61,8 +73,11 @@ class EPropertyEditor(QTabWidget):
         for index, propItem in enumerate(prop.Data):
             lineEdit = QLineEdit()
 
+            self.__setValidator(lineEdit, propItem)
+
             lineEdit.setText("%s" % propItem.Data)
-            lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id, propItem.Id))
+            lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
+                                                               propItem.Id, propItem.Data))
             propLayout.addWidget(lineEdit, 0, index)
 
         theLayout.setLayout(propLayout)

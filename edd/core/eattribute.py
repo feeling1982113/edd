@@ -6,6 +6,7 @@ class EAttribute(EObject):
     kTypeInt = EObject()
     kTypeFloat = EObject()
     kTypeList = EObject()
+    kTypePath = EObject()
     kTypeString = EObject()
     kTypeGeneric = EObject()
 
