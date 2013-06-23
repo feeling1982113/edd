@@ -15,8 +15,6 @@ class EPropertyEditor(QTabWidget):
         self.__scene.onSelectionChanged.connect(self.rebuild)
 
     def __processLineEdit(self, propHandleId, propId):
-        #self.__controller.Handle.updateAttribute(self.sender().kInternalId, self.sender().text())
-        #print self.__controller.fromInternal(self.sender().kInternalId)
         node = self.__controller.getNode(propHandleId)
         node.setAttribute(node.getAttribute(propId), self.sender().text())
 
@@ -62,7 +60,6 @@ class EPropertyEditor(QTabWidget):
 
         for index, propItem in enumerate(prop.Data):
             lineEdit = QLineEdit()
-            #lineEdit.setAlignment(Qt.AlignRight)
 
             lineEdit.setText("%s" % propItem.Data)
             lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id, propItem.Id))

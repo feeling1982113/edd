@@ -47,8 +47,13 @@ class ENodeHandle(EObject):
         if not self.__isConnected():
             return
 
-        affectedId = self.__getAffectedBy(message.getData())
-        if affectedId:
+        attr = self.getAttribute(message.getData())
+
+        if isinstance(attr.Name, uuid.UUID):
+            if self.__attributeLinks.has_key(attr.Name):
+                attr = self.__attributes[attr.Name]
+
+        if self.__getAffectedBy(attr.Id):
             self.compute()
 
     def __isConnected(self):
@@ -105,7 +110,7 @@ class ENodeHandle(EObject):
 
         if propType.matches(EAttribute.kTypeList):
             for item in propValue:
-                pAttr = EAttribute(self).create(EAttribute.kTypeFloat, str(uuid.uuid1()), item)
+                pAttr = EAttribute(self).create(EAttribute.kTypeFloat, attr.Id, item)
 
                 if self.__attributeLinks.has_key(attr.Id):
                     self.__attributeLinks[attr.Id].append(pAttr)
@@ -123,7 +128,7 @@ class ENodeHandle(EObject):
         if not isinstance(eAttribute, EAttribute):
             raise
 
-        if self.getAttribute(eAttribute.Name):
+        if self.getAttribute(eAttribute.Name) and not isinstance(eAttribute.Name, uuid.UUID):
             raise AttributeError("Attribute name is not unique! <%s.%s>" % (self.Name, eAttribute.Name))
 
         self.__attributes[eAttribute.Id] = eAttribute
