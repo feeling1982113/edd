@@ -30,9 +30,19 @@ class EPropertyEditor(QTabWidget):
         return
 
     def __processLineEdit(self, propHandleId, propId, propData):
-        print propData
+
+        pushData = self.sender().text()
+
+        if isinstance(self.sender().validator(), QDoubleValidator):
+            pushData = float(self.sender().text())
+
+        if isinstance(self.sender().validator(), QIntValidator):
+            pushData = int(self.sender().text())
+
         node = self.__controller.getNode(propHandleId)
-        node.setAttribute(node.getAttribute(propId), self.sender().text())
+        node.setAttribute(node.getAttribute(propId), pushData)
+
+        self.sender().setText(str(pushData))
 
     def __setValidator(self, control, prop):
 
