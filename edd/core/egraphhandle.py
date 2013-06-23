@@ -59,11 +59,11 @@ class EGraphHandle(EObject):
     def addConnection(self, connection):
         self.__connections[connection.Id] = connection
 
-        connection.Head.IsConnected = True
-        connection.Tail.IsConnected = True
+        connection.Source.IsConnected = True
+        connection.Destination.IsConnected = True
 
-        connection.Head.Handle.addConnection(connection.Id)
-        connection.Tail.Handle.addConnection(connection.Id)
+        connection.Source.Handle.addConnection(connection.Id)
+        connection.Destination.Handle.addConnection(connection.Id)
 
     def getConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
@@ -88,7 +88,7 @@ class EGraphHandle(EObject):
 
     def delConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
-            attrOne, attrTwo = self.__connections[connectionId].Head, self.__connections[connectionId].Tail
+            attrOne, attrTwo = self.__connections[connectionId].Source, self.__connections[connectionId].Destination
 
             if attrOne.Handle.isInput(attrOne.Id):
                 self.__disconnectAttribute(attrOne)
@@ -120,7 +120,7 @@ class EGraphHandle(EObject):
         result = []
 
         for key, value in self.__connections.iteritems():
-            if attrId in [value.Head.Id, value.Tail.Id]:
+            if attrId in [value.Source.Id, value.Destination.Id]:
                 result.append(key)
 
         return result

@@ -14,6 +14,7 @@ class EAttribute(EObject):
 
         self.__isConnected = False
         self.__isArray = False
+        self.__isDirty = False
 
         self.__attrType = None
         self.__attrName = None
@@ -62,6 +63,7 @@ class EAttribute(EObject):
     @Data.setter
     def Data(self, attrData):
         self.__attrData = attrData
+        self.__isDirty = True
 
     @property
     def IsArray(self):
@@ -77,6 +79,10 @@ class EAttribute(EObject):
 
     def clear(self):
         self.__attrData = None
+
+    @property
+    def IsDirty(self):
+        return self.__isDirty
 
 
 

@@ -9,34 +9,35 @@ from edd.core.egraphhandle import EGraphHandle
 
 class EConnection(EObject):
 
-    def __init__(self, head, tail):
+    def __init__(self, source, destination):
         EObject.__init__(self)
 
-        self.__headAttr = head
-        self.__tailAttr = tail
+        self.__sourceAttr = source
+        self.__destinationAttr = destination
 
-        if head.Handle.isInput(head.Id):
-            self.__tailAttr = head
-            self.__headAttr = tail
+        if source.Handle.isInput(source.Id):
+            self.__destinationAttr = source
+            self.__sourceAttr = destination
 
-        self.__headAttr.Handle.Message.connect(self.__messageFilter)
-        self.__tailAttr.Handle.Message.connect(self.__messageFilter)
+        self.__sourceAttr.Handle.Message.connect(self.__messageFilter)
+        self.__destinationAttr.Handle.Message.connect(self.__messageFilter)
 
     def __messageFilter(self, message):
 
-        #print self.__headAttr.Handle.isInput(message.getData())
-        pass
+        if self.__sourceAttr.matches(message.getData()):
+            self.__sourceAttr.Handle.compute()
+            self.__destinationAttr.Handle.setAttribute(self.__destinationAttr, self.__sourceAttr.Data)
 
     def update(self):
         return
 
     @property
-    def Head(self):
-        return self.__headAttr
+    def Source(self):
+        return self.__sourceAttr
 
     @property
-    def Tail(self):
-        return self.__tailAttr
+    def Destination(self):
+        return self.__destinationAttr
 
 
 class EController(EObject):
@@ -185,7 +186,7 @@ class EController(EObject):
         if inputAttr.IsConnected:
             for connId in self.__graphHandle.getConnectionsFromAttributeId(inputAttr.Id):
                 conn = self.__graphHandle.getConnection(connId)
-                self.disconnectAttr(conn.Head, conn.Tail)
+                self.disconnectAttr(conn.Source, conn.Destination)
 
         connection = EConnection(outputAttr, inputAttr)
         self.__graphHandle.addConnection(connection)
@@ -235,10 +236,10 @@ class EController(EObject):
         return
 
     def __getConnectionCreateCmd(self, connection):
-        headNode = self.getNode(self.__graphHandle.getAttributeHandleId(connection.Head.Id))
-        tailNode = self.getNode(self.__graphHandle.getAttributeHandleId(connection.Tail.Id))
-        return dict({'HEAD': '%s.%s' % (self.getTransform(headNode).Name, connection.Head.Name),
-                     'TAIL': '%s.%s' % (self.getTransform(tailNode).Name, connection.Tail.Name)})
+        headNode = self.getNode(self.__graphHandle.getAttributeHandleId(connection.Source.Id))
+        tailNode = self.getNode(self.__graphHandle.getAttributeHandleId(connection.Destination.Id))
+        return dict({'HEAD': '%s.%s' % (self.getTransform(headNode).Name, connection.Source.Name),
+                     'TAIL': '%s.%s' % (self.getTransform(tailNode).Name, connection.Destination.Name)})
 
     def save(self, sceneFile):
         saveData = dict({'NODES': {}, 'CONNECTIONS': []})

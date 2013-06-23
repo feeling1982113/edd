@@ -13,6 +13,8 @@ class ENodeHandle(EObject):
     kMessageAttributeGet = EObject()
     kMessageAttributeRenamed = EObject()
 
+    kMessageAttributeDirty = EObject()
+
     EProperty = type('EProperty', (EObject,), {'kTypeInt': EAttribute.kTypeInt,
                                                'kTypeFloat': EAttribute.kTypeFloat,
                                                'kTypeList': EAttribute.kTypeList,
@@ -29,32 +31,26 @@ class ENodeHandle(EObject):
         self.__attributes = {}
         self.__inputAttributes = []
         self.__outputAttributes = []
-
         self.__attributesNetwork = {}
 
         self.__connections = {}
-
         self.__attributeLinks = {}
-
         self.__propertyIndexList = {}
-
-        self.Message.connect(self.__messageFilter)
-
         return
 
-    def __messageFilter(self, message):
+    def __messageFilter(self, attr):
 
         if not self.__isConnected():
             return
-
-        attr = self.getAttribute(message.getData())
 
         if isinstance(attr.Name, uuid.UUID):
             if self.__attributeLinks.has_key(attr.Name):
                 attr = self.__attributes[attr.Name]
 
-        if self.__getAffectedBy(attr.Id):
-            self.compute()
+        affectedId = self.__getAffectedBy(attr.Id)
+
+        if affectedId:
+            self.Message.emit(self.kMessageAttributeDirty.setData(self.__attributes[affectedId]))
 
     def __isConnected(self):
         return any([attr.IsConnected for attr in self.__attributes.values() if attr.Id in self.__outputAttributes])
@@ -165,7 +161,7 @@ class ENodeHandle(EObject):
 
         if attr:
             attr.Data = value
-            self.Message.emit(self.kMessageAttributeSet.setData(attr.Id))
+            self.__messageFilter(attr)
             return True
 
         return False
