@@ -12,6 +12,9 @@ class EPropertyEditor(QTabWidget):
         self.__controller = controller
         self.__scene = controller.getScene()
 
+        self.__minValue = 0
+        self.__maxValue = 100000000
+
         self.__scene.onSelectionChanged.connect(self.rebuild)
 
     def rebuild(self, data):
@@ -31,6 +34,8 @@ class EPropertyEditor(QTabWidget):
 
     def __processLineEdit(self, propHandleId, propId, propData):
 
+        self.sender().clearFocus()
+
         pushData = self.sender().text()
 
         if isinstance(self.sender().validator(), QDoubleValidator):
@@ -47,10 +52,10 @@ class EPropertyEditor(QTabWidget):
     def __setValidator(self, control, prop):
 
         if prop.Type.matches(EAttribute.kTypeInt):
-            control.setValidator(QIntValidator(0, 10000000, self))
+            control.setValidator(QIntValidator(self.__minValue, self.__maxValue, self))
 
         if prop.Type.matches(EAttribute.kTypeFloat):
-            control.setValidator(QDoubleValidator(0, 100000000, 6, self))
+            control.setValidator(QDoubleValidator(self.__minValue, self.__maxValue, 4, self))
 
     def __getControl(self, prop):
 
@@ -62,8 +67,7 @@ class EPropertyEditor(QTabWidget):
         lineEdit = QLineEdit('%s' % prop.Data)
         self.__setValidator(lineEdit, prop)
 
-        lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, prop.Handle.Id,
-                                                           prop.Id, prop.Data))
+        lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, prop.Handle.Id, prop.Id, prop.Data))
 
         propLayout.addWidget(lineEdit, 0, 0)
         #propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
@@ -86,7 +90,7 @@ class EPropertyEditor(QTabWidget):
             self.__setValidator(lineEdit, propItem)
 
             lineEdit.setText("%s" % propItem.Data)
-            lineEdit.editingFinished.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
+            lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
                                                                propItem.Id, propItem.Data))
             propLayout.addWidget(lineEdit, 0, index)
 
