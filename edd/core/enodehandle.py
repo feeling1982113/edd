@@ -15,11 +15,6 @@ class ENodeHandle(EObject):
 
     kMessageAttributeDirty = EObject()
 
-    EProperty = type('EProperty', (EObject,), {'kTypeInt': EAttribute.kTypeInt,
-                                               'kTypeFloat': EAttribute.kTypeFloat,
-                                               'kTypeList': EAttribute.kTypeList,
-                                               'kTypeString': EAttribute.kTypeString})
-
     def __init__(self):
         EObject.__init__(self)
 
@@ -100,7 +95,7 @@ class ENodeHandle(EObject):
         self.addAttribute(attr)
         return attr
 
-    def addProperty(self, propType, propName, propValue):
+    def addPropertyAttribute(self, propType, propName, propValue):
 
         attr = EAttribute(self).create(propType, propName, propValue)
 

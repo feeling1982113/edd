@@ -228,7 +228,7 @@ class EScene(QGraphicsScene):
 
                 if isinstance(item, EEdge):
                     if self.__kCutLine.collidesWithPath(item.shape()):
-                        self.__controller.disconnectAttr(item.Source[ENode.kGuiAttributeId], item.Destination[ENode.kGuiAttributeId])
+                        self.__controller.disconnectAttr(item.Tail[ENode.kGuiAttributeId], item.Head[ENode.kGuiAttributeId])
         else:
             self.__isEditMode = False
 
@@ -314,7 +314,7 @@ class EScene(QGraphicsScene):
         if message.matches(EController.kMessageConnectionBroke):
             if message.getData() in self.__connections.keys():
 
-                connTail = self.__connections[message.getData()].Destination
+                connTail = self.__connections[message.getData()].Tail
 
                 if isinstance(connTail[ENode.kGuiAttributeParent], EPoint):
                     connTail[ENode.kGuiAttributeParent].togglePlug(connTail[ENode.kGuiAttributeId])

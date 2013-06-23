@@ -29,7 +29,7 @@ class EConnection(EObject):
             self.__destinationAttr.Handle.setAttribute(self.__destinationAttr, self.__sourceAttr.Data)
 
     def update(self):
-        return
+        self.__messageFilter(ENodeHandle.kMessageAttributeDirty.setData(self.__sourceAttr))
 
     @property
     def Source(self):
@@ -268,3 +268,5 @@ class EController(EObject):
 
         for connData in loadData['CONNECTIONS']:
             self.connectAttr(connData['HEAD'], connData['TAIL'])
+
+        self.__graphHandle.updateConnections()

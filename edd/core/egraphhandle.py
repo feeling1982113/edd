@@ -125,6 +125,10 @@ class EGraphHandle(EObject):
 
         return result
 
+    def updateConnections(self):
+        for conn in self.__connections.values():
+            conn.update()
+
     def updateHandle(self, handle):
 
         if self.__nodes.has_key(handle.Id):

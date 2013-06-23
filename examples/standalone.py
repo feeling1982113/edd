@@ -20,9 +20,9 @@ class MyCollection(ENodeHandle):
 
         self.IsContainer = True
 
-        self.addProperty(self.EProperty.kTypeFloat, "Param 1", 10.0)
-        self.addProperty(self.EProperty.kTypeList, "Param 2", [10.0, 20.0, 30.0])
-        self.addProperty(self.EProperty.kTypeString, "Param 3", '<path_to_file>'.upper())
+        self.addPropertyAttribute(self.EProperty.kTypeFloat, "Param 1", 10.0)
+        self.addPropertyAttribute(self.EProperty.kTypeList, "Param 2", [10.0, 20.0, 30.0])
+        self.addPropertyAttribute(self.EProperty.kTypeString, "Param 3", '<path_to_file>'.upper())
 
         self.__inputAttrA = self.addInputAttribute("InputA")
         self.__inputAttrB = self.addInputAttribute("InputB")
@@ -36,10 +36,10 @@ class MyNodeOne(ENodeHandle):
     def __init__(self):
         ENodeHandle.__init__(self)
 
-        self.addProperty(self.EProperty.kTypeFloat, "Param 1", 10.0)
-        self.addProperty(self.EProperty.kTypeList, "Param 2", [10.0, 20.0])
-        self.addProperty(self.EProperty.kTypeList, "Param 3", [10.0, 20.0, 30.0])
-        self.addProperty(self.EProperty.kTypeString, "Param 4", '<path_to_file>'.upper())
+        self.addPropertyAttribute(self.EProperty.kTypeFloat, "Param 1", 10.0)
+        self.addPropertyAttribute(self.EProperty.kTypeList, "Param 2", [10.0, 20.0])
+        self.addPropertyAttribute(self.EProperty.kTypeList, "Param 3", [10.0, 20.0, 30.0])
+        self.addPropertyAttribute(self.EProperty.kTypeString, "Param 4", '<path_to_file>'.upper())
 
         self.__inputAttr = self.addInputAttribute("Input")
         self.__outputAttr = self.addOutputAttribute("Output")
@@ -52,8 +52,8 @@ class MyNodeTwo(ENodeHandle):
     def __init__(self):
         ENodeHandle.__init__(self)
 
-        self.addProperty(self.EProperty.kTypeFloat, "Param 1", 10.0)
-        self.addProperty(self.EProperty.kTypeList, "Param 2", [10.0, 20.0])
+        self.addPropertyAttribute(self.EProperty.kTypeFloat, "Param 1", 10.0)
+        self.addPropertyAttribute(self.EProperty.kTypeList, "Param 2", [10.0, 20.0])
 
         self.__inputAttrA = self.addInputAttribute("InputA")
         self.__inputAttrB = self.addInputAttribute("InputB")
