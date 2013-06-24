@@ -70,13 +70,13 @@ class EPropertyEditor(QTabWidget):
         lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, prop.Handle.Id, prop.Id, prop.Data))
 
         propLayout.addWidget(lineEdit, 0, 0)
-        #propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
+        propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
 
         theLayout.setLayout(propLayout)
 
         return theLayout
 
-    def __getVectorControl(self, prop):
+    def __getVectorControl(self, prop, sliders=False):
 
         theLayout = QGroupBox('%s' % prop.Name)
         theLayout.setContentsMargins(1, 1, 1, 1)
