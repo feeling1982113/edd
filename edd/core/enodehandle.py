@@ -20,7 +20,7 @@ class ENodeHandle(EObject):
 
         self.kNodeTypeName = None
 
-        self.IsStatic = False
+        self.IsStandAlone = False
         self.IsContainer = False
 
         self.__attributes = {}
@@ -34,6 +34,10 @@ class ENodeHandle(EObject):
         return
 
     def __messageFilter(self, attr):
+
+        if self.IsStandAlone:
+            self.compute()
+            return
 
         if not self.__isConnected():
             return

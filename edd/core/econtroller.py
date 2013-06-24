@@ -196,15 +196,19 @@ class EController(EObject):
         return True
 
     def disconnectAttr(self, attrOne, attrTwo):
+        #DEBUG
+        try:
+            connections = self.__graphHandle.getConnectionsFromAttributeId(self.toInternal(attrOne).Id)
+            connections.extend(self.__graphHandle.getConnectionsFromAttributeId(self.toInternal(attrTwo).Id))
 
-        connections = self.__graphHandle.getConnectionsFromAttributeId(self.toInternal(attrOne).Id)
-        connections.extend(self.__graphHandle.getConnectionsFromAttributeId(self.toInternal(attrTwo).Id))
+            for connId in list(set([x for x in connections if connections.count(x) > 1])):
+                self.__graphHandle.delConnection(self.__graphHandle.getConnection(connId))
+                self.Message.emit(self.kMessageConnectionBroke.setData(connId))
 
-        for connId in list(set([x for x in connections if connections.count(x) > 1])):
-            self.__graphHandle.delConnection(self.__graphHandle.getConnection(connId))
-            self.Message.emit(self.kMessageConnectionBroke.setData(connId))
+            return True
 
-        return True
+        except Exception, e:
+            print e
 
     def ls(self):
         return [node.Name for node in self.__scene.getNodes().itervalues()]

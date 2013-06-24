@@ -5,6 +5,10 @@ class EAttribute(EObject):
 
     kTypeInt = EObject()
     kTypeFloat = EObject()
+
+    kTypeVector2d = EObject()
+    kTypeVector3d = EObject()
+
     kTypeList = EObject()
     kTypePath = EObject()
     kTypeString = EObject()
