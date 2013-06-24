@@ -12,7 +12,7 @@ class EPropertyEditor(QTabWidget):
         self.__controller = controller
         self.__scene = controller.getScene()
 
-        self.__minValue = 0
+        self.__minValue = -100000000
         self.__maxValue = 100000000
 
         self.__scene.onSelectionChanged.connect(self.rebuild)
@@ -86,10 +86,8 @@ class EPropertyEditor(QTabWidget):
 
         for index, propItem in enumerate(prop.Data):
             lineEdit = QLineEdit()
-
-            self.__setValidator(lineEdit, propItem)
-
             lineEdit.setText("%s" % propItem.Data)
+            self.__setValidator(lineEdit, propItem)
             lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
                                                                propItem.Id, propItem.Data))
             propLayout.addWidget(lineEdit, 0, index)

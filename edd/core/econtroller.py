@@ -268,7 +268,14 @@ class EController(EObject):
             self.getTransform(node).setPos(nodeData['PX'], nodeData['PY'])
 
             for propName, propData in nodeData['PROPS'].iteritems():
-                node.getAttribute(propName).Data = propData
+                attr = node.getAttribute(propName)
+                if attr.Type.matches(EAttribute.kTypeList):
+                    for index, attr in enumerate(attr.Data):
+                        attr.Data = propData[index]
+
+                    continue
+
+                attr.Data = propData
 
         for connData in loadData['CONNECTIONS']:
             self.connectAttr(connData['HEAD'], connData['TAIL'])
