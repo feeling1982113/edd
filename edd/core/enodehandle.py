@@ -189,9 +189,19 @@ class ENodeHandle(EObject):
     def addConnection(self, connectionId):
         self.__connections[connectionId] = True
 
+        if self.IsStandAlone:
+            self.compute()
+
     def delConnection(self, connectionId):
         if self.__connections.has_key(connectionId):
             self.__connections.pop(connectionId, None)
+
+        if self.IsStandAlone:
+            if not len(self.__connections):
+                for inAttr in self.lsInputAttributes():
+                    inAttr.Data = None
+
+                self.compute()
 
     def getConnections(self):
         return self.__connections.keys()
