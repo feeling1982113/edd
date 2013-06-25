@@ -103,7 +103,10 @@ class ENodeHandle(EObject):
 
         attr = EAttribute(self).create(propType, propName, propValue)
 
-        if propType.matches(EAttribute.kTypeList):
+        if any([propType.matches(EAttribute.kTypeList),
+                propType.matches(EAttribute.kTypeVector2d),
+                propType.matches(EAttribute.kTypeVector3d)]):
+
             for item in propValue:
                 pAttr = EAttribute(self).create(EAttribute.kTypeFloat, attr.Id, item)
 

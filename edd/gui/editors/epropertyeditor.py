@@ -32,6 +32,12 @@ class EPropertyEditor(QTabWidget):
 
         return
 
+    def __processSlider(self, propHandleId, propId, propData):
+        pushData = self.sender().value() * 0.1
+
+        node = self.__controller.getNode(propHandleId)
+        node.setAttribute(node.getAttribute(propId), pushData)
+
     def __processLineEdit(self, propHandleId, propId, propData):
 
         self.sender().clearFocus()
@@ -70,11 +76,20 @@ class EPropertyEditor(QTabWidget):
         lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, prop.Handle.Id, prop.Id, prop.Data))
 
         propLayout.addWidget(lineEdit, 0, 0)
-        propLayout.addWidget(QSlider(Qt.Horizontal), 1, 0)
 
         theLayout.setLayout(propLayout)
 
         return theLayout
+
+    def __updateAttrGroup(self, groupItem):
+        if isinstance(self.sender(), QLineEdit):
+            self.sender().clearFocus()
+            pushData = float(self.sender().text()) * 10
+            groupItem.setValue(pushData)
+            self.sender().setText(str(pushData * 0.1))
+            return
+
+        groupItem.setText(str(self.sender().value() * 0.1))
 
     def __getVectorControl(self, prop, sliders=False):
 
@@ -85,12 +100,37 @@ class EPropertyEditor(QTabWidget):
         propLayout.setContentsMargins(1, 1, 1, 1)
 
         for index, propItem in enumerate(prop.Data):
+
+            if not sliders:
+                lineEdit = QLineEdit()
+                lineEdit.setText("%s" % propItem.Data)
+                self.__setValidator(lineEdit, propItem)
+                lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
+                                                                 propItem.Id, propItem.Data))
+                propLayout.addWidget(lineEdit, 0, index)
+
+                continue
+
+            slider = QSlider(Qt.Horizontal)
+            slider.setRange(-100.0 * 10, 100.0 * 10)
+            slider.setSingleStep(10)
+
+            slider.setValue(propItem.Data * 10)
+
+            slider.valueChanged.connect(functools.partial(self.__processSlider, propItem.Handle.Id,
+                                                          propItem.Id, propItem.Data))
+
             lineEdit = QLineEdit()
+            lineEdit.setFixedWidth(60)
             lineEdit.setText("%s" % propItem.Data)
             self.__setValidator(lineEdit, propItem)
-            lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
-                                                               propItem.Id, propItem.Data))
-            propLayout.addWidget(lineEdit, 0, index)
+
+            lineEdit.returnPressed.connect(functools.partial(self.__updateAttrGroup, slider))
+            slider.valueChanged.connect(functools.partial(self.__updateAttrGroup, lineEdit))
+
+            propLayout.addWidget(QLabel(' X:'), index, 0)
+            propLayout.addWidget(slider, index, 1)
+            propLayout.addWidget(lineEdit, index, 2)
 
         theLayout.setLayout(propLayout)
 
@@ -106,8 +146,8 @@ class EPropertyEditor(QTabWidget):
         theLayout.setContentsMargins(1, 1, 1, 1)
 
         for prop in nodeProperties:
-            if prop.Type.matches(EAttribute.kTypeList):
-                theLayout.addWidget(self.__getVectorControl(prop))
+            if any([prop.Type.matches(EAttribute.kTypeVector3d), prop.Type.matches(EAttribute.kTypeVector2d)]):
+                theLayout.addWidget(self.__getVectorControl(prop, True))
                 continue
 
             theLayout.addWidget(self.__getControl(prop))

@@ -226,7 +226,10 @@ class EController(EObject):
             if prop.Type.matches(EAttribute.kTypeFloat):
                 props[prop.Name] = float(prop.Data)
 
-            if prop.Type.matches(EAttribute.kTypeList):
+            if any([prop.Type.matches(EAttribute.kTypeList),
+                    prop.Type.matches(EAttribute.kTypeVector3d),
+                    prop.Type.matches(EAttribute.kTypeVector2d)]):
+
                 props[prop.Name] = [float(item.Data) for item in prop.Data]
 
             if prop.Type.matches(EAttribute.kTypeString):
@@ -269,7 +272,10 @@ class EController(EObject):
 
             for propName, propData in nodeData['PROPS'].iteritems():
                 attr = node.getAttribute(propName)
-                if attr.Type.matches(EAttribute.kTypeList):
+                if any([attr.Type.matches(EAttribute.kTypeList),
+                        attr.Type.matches(EAttribute.kTypeVector3d),
+                        attr.Type.matches(EAttribute.kTypeVector2d)]):
+
                     for index, attr in enumerate(attr.Data):
                         attr.Data = propData[index]
 

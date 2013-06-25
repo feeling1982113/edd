@@ -33,7 +33,10 @@ class EAttribute(EObject):
         self.__attrName = attributeName
         self.__attrData = attributeData
 
-        if attributeType.matches(EAttribute.kTypeList):
+        if any([attributeType.matches(EAttribute.kTypeList),
+                attributeType.matches(EAttribute.kTypeVector2d),
+                attributeType.matches(EAttribute.kTypeVector3d)]):
+
             self.__isArray = True
 
         return self
