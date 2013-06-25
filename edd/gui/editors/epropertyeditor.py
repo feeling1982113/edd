@@ -146,13 +146,14 @@ class EPropertyEditor(QTabWidget):
         theLayout.setContentsMargins(1, 1, 1, 1)
 
         for prop in nodeProperties:
-            if any([prop.Type.matches(EAttribute.kTypeVector3d), prop.Type.matches(EAttribute.kTypeVector2d)]):
+            if any([prop.Type.matches(EAttribute.kTypeVector3d),
+                    prop.Type.matches(EAttribute.kTypeVector2d)]):
+
                 theLayout.addWidget(self.__getVectorControl(prop, True))
                 continue
 
             theLayout.addWidget(self.__getControl(prop))
 
-        #theLayout.addWidget(QSlider())
         theLayout.addStretch(0)
         groupBox.setLayout(theLayout)
 

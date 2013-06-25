@@ -4,8 +4,6 @@ from PyQt4.QtCore import pyqtSignal, Qt, QPointF, QLineF, QRectF
 from PyQt4.QtGui import *
 
 from edd.core.eobject import EObject
-from edd.core.eattribute import EAttribute
-
 from edd.core.econtroller import EController
 
 from edd.gui.utils.edraw import EDraw

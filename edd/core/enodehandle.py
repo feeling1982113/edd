@@ -1,4 +1,5 @@
 import uuid
+
 from edd.core.eobject import EObject
 from edd.core.eattribute import EAttribute
 
