@@ -10,7 +10,6 @@ class EAttribute(EObject):
     kTypeVector3d = EObject()
 
     kTypeList = EObject()
-    kTypeEnum = EObject()
     kTypePath = EObject()
     kTypeString = EObject()
     kTypeGeneric = EObject()
@@ -68,7 +67,8 @@ class EAttribute(EObject):
     @property
     def Data(self):
         if self.__isArray:
-            self.__attrData = self.__attrHandle.getAttributeById(self.Id)
+            if any([self.Type.matches(self.kTypeVector2d), self.Type.matches(self.kTypeVector3d)]):
+                return self.__attrHandle.getAttributeById(self.Id)
 
         return self.__attrData
 

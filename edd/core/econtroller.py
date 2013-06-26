@@ -227,8 +227,7 @@ class EController(EObject):
             if prop.Type.matches(EAttribute.kTypeFloat):
                 props[prop.Name] = float(prop.Data)
 
-            if any([prop.Type.matches(EAttribute.kTypeList),
-                    prop.Type.matches(EAttribute.kTypeVector3d),
+            if any([prop.Type.matches(EAttribute.kTypeVector3d),
                     prop.Type.matches(EAttribute.kTypeVector2d)]):
 
                 props[prop.Name] = [float(item.Data) for item in prop.Data]

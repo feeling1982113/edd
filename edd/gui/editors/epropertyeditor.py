@@ -91,7 +91,26 @@ class EPropertyEditor(QTabWidget):
 
         groupItem.setText(str(self.sender().value() * 0.1))
 
-    def __getVectorControl(self, prop, sliders=False):
+    def __getListControl(self, prop):
+
+        theLayout = QGroupBox('Items')
+        theLayout.setContentsMargins(1, 1, 1, 1)
+
+        propLayout = QGridLayout()
+        propLayout.setContentsMargins(1, 1, 1, 1)
+
+        for index, item in enumerate(prop.Data):
+            lineEdit = QLineEdit()
+            lineEdit.setText("%s" % item.Name)
+            #self.__setValidator(lineEdit, propItem)
+            #lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
+            #                                                 propItem.Id, propItem.Data))
+            propLayout.addWidget(lineEdit, index, 0)
+
+        theLayout.setLayout(propLayout)
+        return theLayout
+
+    def __getVectorControl(self, prop):
 
         theLayout = QGroupBox('%s' % prop.Name)
         theLayout.setContentsMargins(1, 1, 1, 1)
@@ -100,17 +119,6 @@ class EPropertyEditor(QTabWidget):
         propLayout.setContentsMargins(1, 1, 1, 1)
 
         for index, propItem in enumerate(prop.Data):
-
-            if not sliders:
-                lineEdit = QLineEdit()
-                lineEdit.setText("%s" % propItem.Data)
-                self.__setValidator(lineEdit, propItem)
-                lineEdit.returnPressed.connect(functools.partial(self.__processLineEdit, propItem.Handle.Id,
-                                                                 propItem.Id, propItem.Data))
-                propLayout.addWidget(lineEdit, 0, index)
-
-                continue
-
             slider = QSlider(Qt.Horizontal)
 
             if propItem.getMinValue() is not None and propItem.getMaxValue() is not None:
@@ -154,7 +162,11 @@ class EPropertyEditor(QTabWidget):
             if any([prop.Type.matches(EAttribute.kTypeVector3d),
                     prop.Type.matches(EAttribute.kTypeVector2d)]):
 
-                theLayout.addWidget(self.__getVectorControl(prop, True))
+                theLayout.addWidget(self.__getVectorControl(prop))
+                continue
+
+            if prop.Type.matches(EAttribute.kTypeList):
+                theLayout.addWidget(self.__getListControl(prop))
                 continue
 
             theLayout.addWidget(self.__getControl(prop))
