@@ -112,7 +112,12 @@ class EPropertyEditor(QTabWidget):
                 continue
 
             slider = QSlider(Qt.Horizontal)
-            slider.setRange(-100.0 * 10, 100.0 * 10)
+
+            if propItem.getMinValue() is not None and propItem.getMaxValue() is not None:
+                slider.setRange(propItem.getMinValue() * 10, propItem.getMaxValue() * 10)
+            else:
+                slider.setRange(-100.0 * 10, 100.0 * 10)
+
             slider.setSingleStep(10)
 
             slider.setValue(propItem.Data * 10)

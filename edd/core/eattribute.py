@@ -10,6 +10,7 @@ class EAttribute(EObject):
     kTypeVector3d = EObject()
 
     kTypeList = EObject()
+    kTypeEnum = EObject()
     kTypePath = EObject()
     kTypeString = EObject()
     kTypeGeneric = EObject()
@@ -24,6 +25,9 @@ class EAttribute(EObject):
         self.__attrType = None
         self.__attrName = None
         self.__attrData = None
+
+        self.__minValue = None
+        self.__maxValue = None
 
         self.__attrHandle = handle
 
@@ -85,12 +89,29 @@ class EAttribute(EObject):
     def IsConnected(self, state):
         self.__isConnected = state
 
-    def clear(self):
-        self.__attrData = None
-
     @property
     def IsDirty(self):
         return self.__isDirty
+
+    def setMinValue(self, minValue):
+        self.__minValue = minValue
+
+        if self.__isArray:
+            for attr in self.__attrHandle.getAttributeById(self.Id):
+                attr.setMinValue(self.__minValue)
+
+    def getMinValue(self):
+        return self.__minValue
+
+    def setMaxValue(self, maxValue):
+        self.__maxValue = maxValue
+
+        if self.__isArray:
+            for attr in self.__attrHandle.getAttributeById(self.Id):
+                attr.setMaxValue(self.__maxValue)
+
+    def getMaxValue(self):
+        return self.__maxValue
 
 
 

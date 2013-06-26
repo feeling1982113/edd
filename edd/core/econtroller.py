@@ -22,6 +22,9 @@ class EConnection(EObject):
         self.__sourceAttr.Handle.Message.connect(self.__messageFilter)
         self.__destinationAttr.Handle.Message.connect(self.__messageFilter)
 
+        self.__sourceAttr.Handle.compute()
+        self.__destinationAttr.Handle.compute()
+
         self.__destinationAttr.Handle.setAttribute(self.__destinationAttr, self.__sourceAttr.Data)
 
     def __messageFilter(self, message):
@@ -280,6 +283,8 @@ class EController(EObject):
                     continue
 
                 attr.Data = propData
+
+            node.compute()
 
         for connData in loadData['CONNECTIONS']:
             self.connectAttr(connData['HEAD'], connData['TAIL'])
