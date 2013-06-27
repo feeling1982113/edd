@@ -21,24 +21,18 @@ class EConnection(EObject):
             self.__sourceAttr = destination
 
         self.__sourceAttr.Handle.Message.connect(self.__messageFilter)
-        self.__destinationAttr.Handle.Message.connect(self.__messageFilter)
 
         self.__sourceAttr.Handle.compute()
-        self.__destinationAttr.Handle.compute()
-
         self.__destinationAttr.Handle.setAttribute(self.__destinationAttr, self.__sourceAttr.Data)
 
     def __messageFilter(self, message):
 
         if message.matches(ENodeHandle.kMessageAttributeDirty):
-            self.__destinationAttr.Data = self.__sourceAttr.Data
-
-        if self.__sourceAttr.matches(message.getData()):
             self.__sourceAttr.Handle.compute()
             self.__destinationAttr.Handle.setAttribute(self.__destinationAttr, self.__sourceAttr.Data)
 
     def update(self):
-        self.__messageFilter(ENodeHandle.kMessageAttributeDirty.setData(self.__sourceAttr))
+        self.__sourceAttr.Handle.compute()
 
     @property
     def Source(self):

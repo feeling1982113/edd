@@ -48,6 +48,7 @@ class ENodeHandle(EObject):
                 attr = self.__attributes[attr.Name]
 
         affectedId = self.__getAffectedBy(attr.Id)
+        print 'Calc affected...', affectedId
 
         if affectedId:
             self.Message.emit(self.kMessageAttributeDirty.setData(self.__attributes[affectedId]))
@@ -160,6 +161,7 @@ class ENodeHandle(EObject):
         return None
 
     def setAttribute(self, attribute, value):
+
         attr = self.getAttribute(attribute)
 
         if attr:
