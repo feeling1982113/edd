@@ -91,6 +91,36 @@ class EPropertyEditor(QTabWidget):
 
         groupItem.setText(str(self.sender().value() * 0.1))
 
+    def __getPathControl(self, prop):
+
+        def fileOpenAction(lineEdit, propHandleId, propId):
+            fileName = QFileDialog.getOpenFileName(self, "Load File", '*.abc')
+
+            if fileName:
+                lineEdit.setText("%s" % fileName)
+
+                node = self.__controller.getNode(propHandleId)
+                node.setAttribute(node.getAttribute(propId), str(fileName))
+
+        theLayout = QGroupBox('Path')
+        theLayout.setContentsMargins(1, 1, 1, 1)
+
+        propLayout = QGridLayout()
+        propLayout.setContentsMargins(1, 1, 1, 1)
+
+        lineEdit = QLineEdit()
+        lineEdit.setText("%s" % prop.Data)
+
+        propLayout.addWidget(lineEdit, 0, 0)
+
+        openFileButton = QPushButton('Open')
+        openFileButton.clicked.connect(functools.partial(fileOpenAction, lineEdit, prop.Handle.Id, prop.Id))
+
+        propLayout.addWidget(openFileButton, 0, 1)
+        theLayout.setLayout(propLayout)
+
+        return theLayout
+
     def __getListControl(self, prop):
 
         theLayout = QGroupBox('Items')
@@ -167,6 +197,10 @@ class EPropertyEditor(QTabWidget):
 
             if prop.Type.matches(EAttribute.kTypeList):
                 theLayout.addWidget(self.__getListControl(prop))
+                continue
+
+            if prop.Type.matches(EAttribute.kTypePath):
+                theLayout.addWidget(self.__getPathControl(prop))
                 continue
 
             theLayout.addWidget(self.__getControl(prop))

@@ -1,3 +1,4 @@
+import time
 import uuid
 import json
 
@@ -28,6 +29,9 @@ class EConnection(EObject):
         self.__destinationAttr.Handle.setAttribute(self.__destinationAttr, self.__sourceAttr.Data)
 
     def __messageFilter(self, message):
+
+        if message.matches(ENodeHandle.kMessageAttributeDirty):
+            self.__destinationAttr.Data = self.__sourceAttr.Data
 
         if self.__sourceAttr.matches(message.getData()):
             self.__sourceAttr.Handle.compute()
@@ -232,7 +236,9 @@ class EController(EObject):
 
                 props[prop.Name] = [float(item.Data) for item in prop.Data]
 
-            if prop.Type.matches(EAttribute.kTypeString):
+            if any([prop.Type.matches(EAttribute.kTypeString),
+                    prop.Type.matches(EAttribute.kTypePath)]):
+
                 props[prop.Name] = str(prop.Data)
 
         return dict({'REQUEST': nodeTransform.Handle.NodeType,
