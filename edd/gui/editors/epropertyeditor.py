@@ -32,13 +32,25 @@ class EPropertyEditor(QTabWidget):
 
         return
 
-    def __processSlider(self, propHandleId, propId, propData):
+    def __setValidator(self, control, prop):
+
+        if prop.Type.matches(EAttribute.kTypeInt):
+            control.setValidator(QIntValidator(self.__minValue, self.__maxValue, self))
+
+        if prop.Type.matches(EAttribute.kTypeFloat):
+            control.setValidator(QDoubleValidator(self.__minValue, self.__maxValue, 4, self))
+
+    def __updateAttribute(self, attrHandleId, attrId, attrData):
+
+        node = self.__controller.getNode(attrHandleId)
+        node.setAttribute(node.getAttribute(attrId), attrData)
+
+    def __processSlider(self, propHandleId, propId):
+
         pushData = self.sender().value() * 0.1
+        self.__updateAttribute(propHandleId, propId, pushData)
 
-        node = self.__controller.getNode(propHandleId)
-        node.setAttribute(node.getAttribute(propId), pushData)
-
-    def __processLineEdit(self, propHandleId, propId, propData):
+    def __processLineEdit(self, propHandleId, propId):
 
         self.sender().clearFocus()
 
@@ -50,18 +62,9 @@ class EPropertyEditor(QTabWidget):
         if isinstance(self.sender().validator(), QIntValidator):
             pushData = int(self.sender().text())
 
-        node = self.__controller.getNode(propHandleId)
-        node.setAttribute(node.getAttribute(propId), pushData)
+        self.__updateAttribute(propHandleId, propId, pushData)
 
         self.sender().setText(str(pushData))
-
-    def __setValidator(self, control, prop):
-
-        if prop.Type.matches(EAttribute.kTypeInt):
-            control.setValidator(QIntValidator(self.__minValue, self.__maxValue, self))
-
-        if prop.Type.matches(EAttribute.kTypeFloat):
-            control.setValidator(QDoubleValidator(self.__minValue, self.__maxValue, 4, self))
 
     def __getControl(self, prop):
 
@@ -160,8 +163,7 @@ class EPropertyEditor(QTabWidget):
 
             slider.setValue(propItem.Data * 10)
 
-            slider.valueChanged.connect(functools.partial(self.__processSlider, propItem.Handle.Id,
-                                                          propItem.Id, propItem.Data))
+            slider.valueChanged.connect(functools.partial(self.__processSlider, propItem.Handle.Id, propItem.Id))
 
             lineEdit = QLineEdit()
             lineEdit.setFixedWidth(60)
