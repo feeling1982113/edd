@@ -100,7 +100,7 @@ class ENodeHandle(EObject):
         self.addAttribute(attr)
         return attr
 
-    def addPropertyAttribute(self, propType, propName, propValue):
+    def addPropertyAttribute(self, propName, propType, propValue):
 
         attr = EAttribute(self).create(propType, propName, propValue)
 
