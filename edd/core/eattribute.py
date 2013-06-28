@@ -14,6 +14,8 @@ class EAttribute(EObject):
     kTypeString = EObject()
     kTypeGeneric = EObject()
 
+    kTypeCustom = EObject()
+
     def __init__(self, handle):
         EObject.__init__(self)
 

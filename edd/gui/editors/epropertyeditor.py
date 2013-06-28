@@ -205,6 +205,15 @@ class EPropertyEditor(QTabWidget):
                 theLayout.addWidget(self.__getPathControl(prop))
                 continue
 
+            if prop.Type.matches(EAttribute.kTypeCustom):
+                if isinstance(prop.Data, QLayout):
+                    tGroup = QGroupBox('%s' % prop.Name)
+                    tGroup.setContentsMargins(1, 1, 1, 1)
+                    prop.Data.setContentsMargins(1, 1, 1, 1)
+                    tGroup.setLayout(prop.Data)
+                    theLayout.addWidget(tGroup)
+                    continue
+
             theLayout.addWidget(self.__getControl(prop))
 
         theLayout.addStretch(0)
