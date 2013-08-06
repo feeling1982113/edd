@@ -7,7 +7,7 @@ sys.path.append(os.getcwd().replace("examples", ''))
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
+from edd.core.eattribute import EAttribute
 from edd.core.enodehandle import ENodeHandle
 
 from edd.ewidget import EWidget
@@ -20,9 +20,9 @@ class MyCollection(ENodeHandle):
 
         self.IsContainer = True
 
-        self.addPropertyAttribute("Param 1", self.EProperty.kTypeFloat, 10.0)
-        self.addPropertyAttribute("Param 2", self.EProperty.kTypeList, [10.0, 20.0, 30.0])
-        self.addPropertyAttribute("Param 3", self.EProperty.kTypeString, '<path_to_file>'.upper())
+        self.addPropertyAttribute("Param 1", EAttribute.kTypeFloat, 10.0)
+        self.addPropertyAttribute("Param 2", EAttribute.kTypeList, [10.0, 20.0, 30.0])
+        self.addPropertyAttribute("Param 3", EAttribute.kTypeString, '<path_to_file>'.upper())
 
         self.__inputAttrA = self.addInputAttribute("InputA")
         self.__inputAttrB = self.addInputAttribute("InputB")
@@ -36,10 +36,10 @@ class MyNodeOne(ENodeHandle):
     def __init__(self):
         ENodeHandle.__init__(self)
 
-        self.addPropertyAttribute("Param 1", self.EProperty.kTypeFloat, 10.0)
-        self.addPropertyAttribute("Param 2", self.EProperty.kTypeList, [10.0, 20.0])
-        self.addPropertyAttribute("Param 3", self.EProperty.kTypeList, [10.0, 20.0, 30.0])
-        self.addPropertyAttribute("Param 4", self.EProperty.kTypeString, '<path_to_file>'.upper())
+        self.addPropertyAttribute("Param 1", EAttribute.kTypeFloat, 10.0)
+        self.addPropertyAttribute("Param 2", EAttribute.kTypeVector2d, [10.0, 20.0])
+        self.addPropertyAttribute("Param 3", EAttribute.kTypeVector3d, [10.0, 20.0, 30.0])
+        self.addPropertyAttribute("Param 4", EAttribute.kTypeString, '<path_to_file>'.upper())
 
         self.__inputAttr = self.addInputAttribute("Input")
         self.__outputAttr = self.addOutputAttribute("Output")
@@ -52,8 +52,8 @@ class MyNodeTwo(ENodeHandle):
     def __init__(self):
         ENodeHandle.__init__(self)
 
-        self.addPropertyAttribute("Param 1", self.EProperty.kTypeFloat, 10.0)
-        self.addPropertyAttribute("Param 2", self.EProperty.kTypeList, [10.0, 20.0])
+        self.addPropertyAttribute("Param 1", EAttribute.kTypeFloat, 10.0)
+        self.addPropertyAttribute("Param 2", EAttribute.kTypeVector3d, [10.0, 20.0])
 
         self.__inputAttrA = self.addInputAttribute("InputA")
         self.__inputAttrB = self.addInputAttribute("InputB")
